@@ -1,0 +1,107 @@
+
+
+<html>
+    <head>
+        <style>
+            th, td {
+                padding: 8px;
+                border: 2px solid rgb(145, 142, 142); 
+                color: #000;  
+                text-align: center;
+                vertical-align: center;
+            }
+            table {     
+                border-collapse: collapse;
+                border-spacing: 0;
+                width: 100%;
+                border: 1px solid #ddd;
+            }
+            th{
+                background-color: silver;
+                width: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <table  id="myTable">
+            <tr >
+                <th >SN</th>
+                <th>liscenceplate no</th>
+                <th>Speed</th>
+                <th>limit</th>
+                <!-- <th>limit crossed</th> -->
+                <th>Date</th>
+               
+            </tr>
+           
+            {% for viewrecord in viewrecord_list %}
+          <tr>
+            <td>{{viewrecord.SN}}</td>
+            <td>{{viewrecord.liscenceplate_no}}</td>
+            <td>{{viewrecord.speed}}</td>
+            <td>50</td>
+            <!-- <td>{{viewrecord.limit_crossed}}</td> -->
+            <td>{{viewrecord.date}}</td>
+          </tr>
+          {% endfor %}
+           
+        </table>
+
+        <p align="right">
+          <input type="date" id="datePicker">
+          <button onclick="generateCSV()">Download CSV</button>
+          </p>
+    </body>
+</html>
+
+
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const table = document.getElementById('myTable');
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
+      const limitCell = rows[i].getElementsByTagName('td')[3];
+      const speedCell = rows[i].getElementsByTagName('td')[2];
+      
+      const limit = parseInt(limitCell.innerText);
+      const Speed = parseInt(speedCell.innerText);
+      
+      if (Speed > limit) {
+        speedCell.style.backgroundColor = 'red';
+      }
+    }
+  });
+
+  function generateCSV() {
+    // Retrieve selected date from the input
+    const selectedDate = document.getElementById("datePicker").value;
+
+    // Filter the records based on the selected date
+    const table = document.getElementById("myTable");
+    const rows = table.getElementsByTagName("tr");
+    const filteredRows = Array.from(rows).filter(row => {
+      const dateColumn = row.querySelector(".Date"); // Replace with the appropriate selector for the date column
+      return dateColumn.textContent.trim() === selectedDate;
+    });
+
+    // Prepare the CSV data
+    let csvData = "Date\n"; // Header row
+    filteredRows.forEach(row => {
+      const dateColumn = row.querySelector(".Date"); // Replace with the appropriate selector for the date column
+      // const timeColumn = row.querySelector(".time-column"); // Replace with the appropriate selector for the time column
+      csvData += `${dateColumn.textContent.trim()},${timeColumn.textContent.trim()}\n`;
+    });
+
+    // Trigger the download
+    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+    const downloadLink = document.createElement("a");
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = "filtered_records.csv";
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
+</script>

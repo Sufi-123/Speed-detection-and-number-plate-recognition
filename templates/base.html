@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* CSS styles for the TV container */
+    .tv-container {
+      width: 1400px;
+      height: 700px;
+      background-color: #ccc1c1;
+      border: 2px solid #0c0c0c;
+      position: relative;
+    }
+
+    /* CSS styles for the big box on the left */
+    .big-box {
+      width: 88%;
+      height: 88%;
+      background-color: #fff;
+      position: absolute;
+      top: 5%;
+      bottom: 5%;
+      left: 2%;
+    }
+
+    /* CSS styles for the small blue boxes on the right */
+    .small-box {
+      width: 7%;
+      height: 7%;
+      background-color: rgb(138, 138, 180);
+      position: absolute;
+      top: 10%;
+      right: 1%;
+      margin-bottom: 5%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="tv-container">
+    <div class="big-box"></div>
+    <div class="small-box">
+        <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;'>Start Camera</button>
+    </div>
+    <div class="small-box" style="top: 45%;">
+        <button style='width: 100px; height: 50px;font-weight: bold; font-size: large;'>Stop Camera</button></div>
+    <div class="small-box" style="top: 80%;">
+        <a href="/viewrecords">
+            <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;'>View Records</button>
+        </a>
+    </div>
+  </div>
+</body>
+</html>
