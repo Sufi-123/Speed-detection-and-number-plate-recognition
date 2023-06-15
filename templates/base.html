@@ -39,7 +39,57 @@
   </style>
 </head>
 <body>
-  <div class="tv-container">
+    <div class="tv-container">
+      <div class="big-box" id="video-container">
+        <video id="video" autoplay="" height="88%", width="88%"></video>
+      </div>
+      <div class="small-box">
+        <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;' onclick="startCamera()">Start Camera</button>
+      </div>
+      <div class="small-box" style="top: 45%;">
+        <button style='width: 100px; height: 50px;font-weight: bold; font-size: large;' onclick="stopCamera()">Stop Camera</button>
+      </div>
+      <!-- ... -->
+    </div>
+  
+    <script>
+      let videoStream; // Variable to store the video stream
+  
+      function startCamera() {
+        const videoContainer = document.getElementById('video-container');
+  
+        // Check if getUserMedia is supported by the browser
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          // Access the user's webcam
+          navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+              // Display the video feed in the videoContainer
+              videoContainer.innerHTML = '<video id="video" autoplay></video>';
+              const videoElement = document.getElementById('video');
+              videoElement.srcObject = stream;
+              videoStream = stream;
+            })
+            .catch(function(error) {
+              console.log('Error accessing webcam:', error);
+            });
+        } else {
+          console.log('getUserMedia is not supported');
+        }
+      }
+  
+      function stopCamera() {
+        if (videoStream) {
+          // Stop the video stream
+          videoStream.getTracks().forEach(track => track.stop());
+          videoStream = null;
+  
+          // Clear the videoContainer
+          const videoContainer = document.getElementById('video-container');
+          videoContainer.innerHTML = '';
+        }
+      }
+    </script>
+  <!-- <div class="tv-container">
     <div class="big-box"></div>
     <div class="small-box">
         <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;'>Start Camera</button>
@@ -51,6 +101,6 @@
             <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;'>View Records</button>
         </a>
     </div>
-  </div>
+  </div> -->
 </body>
 </html>
