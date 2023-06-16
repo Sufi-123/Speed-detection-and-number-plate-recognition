@@ -21,31 +21,49 @@ def recognize_number_plate(image_path):
     vehicle_image = cv2.imread(image_path)
     # Perform object detection using YOLO
     detections = model(vehicle_image)
-    
+
+
     # Extract bounding boxes and crop number plate regions
     number_plate_box = None
     for detection in detections[0].boxes.data:
         if detection[5] == 0:  
             number_plate_box = detection[:4]
             break  
-    
-    # Crop the number plate region
+            
+#      Draw bounding box on the original image
     if number_plate_box is not None:
-          x1, y1, x2, y2 = number_plate_box
-          cropped_image = vehicle_image[int(y1):int(y2), int(x1):int(x2)]
+        x1, y1, x2, y2 = number_plate_box
+        cv2.rectangle(vehicle_image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+    
+    # Display the original image with bounding box
+    display(Image(data=cv2.imencode('.jpg', vehicle_image)[1].tobytes()))
+    
+    # Preprocess the number plate region
+    if number_plate_box is not None:
+        # Crop the number plate region
+        cropped_image = vehicle_image[int(y1):int(y2), int(x1):int(x2)]
+        # Display the cropped image
+        display(Image(data=cv2.imencode('.jpg', cropped_image)[1].tobytes()))
+        
+        # Convert to grayscale
+        grayscale_image = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
+        # Display the grayscale image
+        display(Image(data=cv2.imencode('.jpg',grayscale_image)[1].tobytes()))
+        
+        # Apply Otsu thresholding
+        _, threshold_image = cv2.threshold(grayscale_image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        # Display the threshold image
+        display(Image(data=cv2.imencode('.jpg',threshold_image)[1].tobytes()))
+        
+        # Perform OCR on the thresholded image
+        result = reader.readtext(threshold_image, allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ', detail=0)
     else:
         print("Number plate not found.")
     
-    # Perform OCR on the number plate image
-    recognized_plates = []
-    for crop_image in cropped_image:
-        result = reader.readtext(cropped_image)
-         # Extract the text from the OCR result
-        if result:
-            recognized_plate = result[0][1]
-            recognized_plates.append(recognized_plate)
-            
-            return recognized_plates
+    # Extract the text from the OCR result
+    recognized_plates = [''.join(result)]
+    
+    return recognized_plates
 
 #path to image
 image_path = 'zz.jpeg'  
