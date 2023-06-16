@@ -1,78 +1,69 @@
 import cv2
 import easyocr
-import numpy as np
-from matplotlib import pyplot as plt
-import time
-
-from IPython import display
-display.clear_output()
+from IPython.display import Image, display
 
 import ultralytics
 ultralytics.checks()
 from ultralytics import YOLO
-from IPython.display import display, Image
 
-# load an pretrained model
+# Load a pretrained model
 model = YOLO('best.pt') 
-model.conf = 0.4  #confidence threshold for detection
+model.conf = 0.4  # Confidence threshold for detection
 
-#initializing ocr
+# Initializing OCR
 reader = easyocr.Reader(['en', 'ne'])
 
-def recognize_number_plate(image):
-    vehicle_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert image to RGB
-    # Perform object detection using YOLO
-    detections = model(vehicle_image)
+def recognize_number_plate(video_path):
+    # Open the video file
+    video = cv2.VideoCapture(video_path)
     
-    # Extract bounding boxes and crop number plate regions
-    number_plate_box = None
-    for detection in detections[0].boxes.data:
-        if detection[5] == 0:
-            number_plate_box = detection[:4]
-            break
-    
-    # Crop the number plate region
-    if number_plate_box is not None:
-        x1, y1, x2, y2 = number_plate_box
-        cropped_image = vehicle_image[int(y1):int(y2), int(x1):int(x2)]
-    else:
-        print("Number plate not found.")
-    
-    # Perform OCR on the number plate image
+    # Initialize an empty list to store recognized number plates
     recognized_plates = []
-    result = reader.readtext(cropped_image)
-    # Extract the text from the OCR result
-    if result:
-        recognized_plate = result[0][1]
-        recognized_plates.append(recognized_plate)
+    
+    # Read frames from the video
+    while True:
+        ret, frame = video.read()
+        
+        # Check if a frame was successfully read
+        if not ret:
+            break
+        
+        # Perform object detection using YOLO
+        detections = model(frame)
+        
+        # Extract bounding boxes and crop number plate regions
+        number_plate_box = None
+        for detection in detections[0].boxes.data:
+            if detection[5] == 0:  
+                number_plate_box = detection[:4]
+                break
+        
+        # Crop the number plate region
+        if number_plate_box is not None:
+            x1, y1, x2, y2 = number_plate_box
+            cropped_image = frame[int(y1):int(y2), int(x1):int(x2)]
+            
+            # # Display the cropped image
+            # display(Image(data=cv2.imencode('.jpg', cropped_image)[1].tobytes()))
+            
+            # Perform OCR on the number plate image
+            result = reader.readtext(cropped_image, allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ', detail=0)
+            
+            # Extract the text from the OCR result
+            recognized_plate = ''.join(result)
+            
+            # Add the recognized plate to the list
+            recognized_plates.append(recognized_plate)
+    
+    # Release the video file
+    video.release()
     
     return recognized_plates
 
-# Open the video stream
-cap = cv2.VideoCapture('your_streaming_video_url')
+# Path to video file
+video_path = 'example.mp4'  
+recognized_plates = recognize_number_plate(video_path)
 
-while cap.isOpened():
-    # Read a frame from the video stream
-    ret, frame = cap.read()
-    
-    if not ret:
-        break
-    
-    # Pass the frame to the recognition function
-    recognized_plates = recognize_number_plate(frame)
-
-    # Print the recognized number plates
-    for plate in recognized_plates:
-        print(plate)
-
-    # Display the frame
-    cv2.imshow('Video Stream', frame)
-    
-    # Check for key press to exit
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release the video stream and close windows
-cap.release()
-cv2.destroyAllWindows()
-
+# Print the recognized number plates
+for plate in recognized_plates:
+    print(plate)
