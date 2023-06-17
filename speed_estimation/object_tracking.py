@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from ultralytics import YOLO
 from tracker import *
-
+from user_app.models import vehicle
 #yolo model loaded
 model=YOLO('yolov8s.pt')
 
@@ -18,9 +18,9 @@ cv2.namedWindow('RGB')
 cv2.setMouseCallback('RGB', RGB)               
 
 #VideoLink
-cap=cv2.VideoCapture('C:/Users/Administrator/Desktop/cars.mp4')
+cap=cv2.VideoCapture(r'C:\Users\sufid\Desktop\speeddetection&numberplate\Speed-detection-and-number-plate-recognition\Cars_Moving.mp4')
 
-my_file = open("speed_estimation\coco.txt", "r")
+my_file = open(r"C:\Users\sufid\Desktop\Speed-detection-and-number-plate-recognition\speed_estimation\coco.txt", "r")
 data = my_file.read()
 class_detections = data.split("\n")
 
@@ -90,9 +90,16 @@ while True:
 
                     cv2.circle(frame,(cx,cy),5,(0,0,255),-1)
                     cv2.rectangle(frame,(x3,y3),(x4,y4),(0,0,255),2)
-                    cv2.putText(frame,str(vehicles_entering[id]),(x3,y3-10),0,0.75,(255,255,255),2)    
+                    cv2.putText(frame,str(vehicles_entering[id]),(x3,y3-10),0,0.75,(255,255,255),2)
+
+                    
+                    a=vehicle.objects.get(ID= counted_ids)
+                    a.count=vehicles_entering
+                    a.save()
+
+
     
-    
+        # print(type(frame))
         cv2.imshow("RGB", frame)
 
     key= cv2.waitKey(1)
@@ -105,3 +112,7 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+
+
+
+

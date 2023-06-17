@@ -46,6 +46,22 @@
           {% endfor %}
            
         </table>
+        <table>
+          <tr>
+            <th >ID</th>
+            <th >count</th>
+          </tr>
+
+
+          {% for viewrecord in viewrecord_list %}
+          <tr>
+            <td>{{vehicle.ID}}</td>
+            <td>{{vehicle.count}}</td>
+          </tr>
+          {% endfor %}
+
+
+        </table>
 
         <p align="right">
           <input type="date" id="datePicker">

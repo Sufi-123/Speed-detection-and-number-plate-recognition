@@ -1,0 +1,120 @@
+
+  
+  <style>
+	body {
+	  margin: 0;
+	  padding: 0;
+	  background-color: #f6f6f6;
+	  font-family: Arial, sans-serif;
+	}
+  
+	.container {
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  height: 100vh;
+	}
+  
+	.form-container {
+	  width: 400px;
+	  padding: 40px;
+	  background-color: #ffffff;
+	  border-radius: 10px;
+	  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+	}
+  
+	.form-container h1 {
+	  text-align: center;
+	  font-size: 24px;
+	  color: #333333;
+	  margin-bottom: 20px;
+	}
+  
+	.form-container form {
+	  display: flex;
+	  flex-direction: column;
+	}
+  
+	.form-container label {
+	  font-weight: bold;
+	  margin-bottom: 5px;
+	}
+  
+	.form-container input[type="text"],
+	.form-container input[type="password"] {
+	  padding: 10px;
+	  margin-bottom: 15px;
+	  border: 1px solid #dddddd;
+	  border-radius: 5px;
+	  outline: none;
+	}
+  
+	.form-container button {
+	  padding: 12px 20px;
+	  background-color: #007bff;
+	  color: #ffffff;
+	  border: none;
+	  border-radius: 5px;
+	  font-weight: bold;
+	  cursor: pointer;
+	  transition: background-color 0.3s;
+	}
+  
+	.form-container button:hover {
+	  background-color: #0056b3;
+	}
+  
+	.form-container p.text-center {
+	  text-align: center;
+	  margin-top: 20px;
+	  color: #888888;
+	}
+  
+	.form-container p.text-center a {
+	  color: #007bff;
+	  text-decoration: none;
+	  font-weight: bold;
+	}
+  
+	.form-container p.text-center a:hover {
+	  text-decoration: underline;
+	}
+  </style>
+  
+  <body>
+	<!--Register-->
+	<div class="container">
+	  <div class="form-container">
+		<h1>Register</h1>
+		<form method="POST">
+		  {% csrf_token %}
+		  <label for="username">Username</label>
+		  <input type="text" id="username" name="username" required>
+  
+		  <label for="email">Email</label>
+		  <input type="text" id="email" name="email" required>
+  
+		  <label for="password">Password</label>
+		  <input type="password" id="password" name="password" required>
+  
+		  <button type="submit">Register</button>
+		</form>
+		<p class="text-center">If you already have an account, <a href="/login">login</a> instead.</p>
+	  </div>
+	</div>
+  </body>
+  
+
+<!-- <body>
+
+<div class="container py-5">
+	<h1>Register</h1>
+	<form method="POST">
+		{% csrf_token %}
+		    {{register_form}}                  
+		    <button class="btn btn-primary" type="submit">Register</button>
+	</form>
+	<p class="text-center">If you already have an account, <a href="/login">login</a> instead.</p>
+</div>
+</body> -->
+
