@@ -21,6 +21,13 @@
       bottom: 5%;
       left: 2%;
     }
+    #video {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
 
     /* CSS styles for the small blue boxes on the right */
     .small-box {
@@ -41,7 +48,7 @@
 <body>
     <div class="tv-container">
       <div class="big-box" id="video-container">
-        <video id="video" autoplay="" height="88%", width="88%"></video>
+        <video id="video" autoplay="" ></video>
       </div>
       <div class="small-box">
         <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;' onclick="startCamera()">Start Camera</button>
@@ -49,7 +56,12 @@
       <div class="small-box" style="top: 45%;">
         <button style='width: 100px; height: 50px;font-weight: bold; font-size: large;' onclick="stopCamera()">Stop Camera</button>
       </div>
-      <!-- ... -->
+      <div class="small-box" style="top: 80%;">
+        <a href="/viewrecords">
+            <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;'>View Records</button>
+        </a>
+    </div>
+    
     </div>
   
     <script>
@@ -64,11 +76,12 @@
           navigator.mediaDevices.getUserMedia({ video: true })
             .then(function(stream) {
               // Display the video feed in the videoContainer
+              
               videoContainer.innerHTML = '<video id="video" autoplay></video>';
               const videoElement = document.getElementById('video');
               videoElement.srcObject = stream;
               videoStream = stream;
-            })
+            }) 
             .catch(function(error) {
               console.log('Error accessing webcam:', error);
             });
