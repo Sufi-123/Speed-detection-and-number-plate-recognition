@@ -50,11 +50,10 @@ def recognize_number_plate(image_path):
             number_plate_box = detection[:4]
             break  
             
-#    Draw bounding box on the original image
+    #Draw bounding box on the original image
     if number_plate_box is not None:
         x1, y1, x2, y2 = number_plate_box
         cv2.rectangle(vehicle_image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-    
     # Display the original image with bounding box
     display(Image(data=cv2.imencode('.jpg', vehicle_image)[1].tobytes()))
     
