@@ -14,6 +14,16 @@ class viewrecord(models.Model):
     # limit= models.IntegerField()
     # limit_crossed= models.IntegerField()
     date= models.DateField()
+
+
+def __int__(self) :
+    return int(self.SN)
+
+class vehicle(models.Model):
+     ID= models.IntegerField()
+     count= models.IntegerField()
     
-    def __int__(self) :
-        return int(self.SN)
+def __int__(self) :
+    return int(self.ID)
+    
+
