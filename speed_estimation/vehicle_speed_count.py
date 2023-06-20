@@ -2,7 +2,7 @@ import cv2
 import pandas as pd
 import numpy as np
 from ultralytics import YOLO
-from tracker import *
+from .tracker import *
 
 import time
 import math
@@ -11,8 +11,8 @@ import math
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.7)  
-    center_y2 = int(frame_height * 0.9)  
+    center_y1 = int(frame_height * 0.55)  
+    center_y2 = int(frame_height * 0.8)  
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0.1)
     line_x2 = int(frame_width * 0.9)
@@ -55,6 +55,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     distance = abs(y4 - y3)  # Use the height of the bounding box as the distance
                     a_speed_ms = distance / elapsed_time
                     a_speed_kh = a_speed_ms * 3.6
+                    cv2.putText(frame, str(len(counter)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh, bbox, frame)
 
         if center_y2 < (cy + offset) and center_y2 > (cy - offset):
@@ -68,6 +69,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     distance1 = abs(y4 - y3)  # Use the height of the bounding box as the distance
                     a_speed_ms1 = distance1 / elapsed1_time
                     a_speed_kh1 = a_speed_ms1 * 3.6
+                    cv2.putText(frame, str(len(counter1)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh1, bbox, frame)
 
     cv2.line(frame, (line_x1, center_y1), (line_x2, center_y1), (255, 255, 255), 1)
@@ -88,9 +90,13 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 
-def process_video(video_path, model_path, class_list_path):
+def process_video():
+    video_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\video.mp4'
+    model_path = 'yolov8s.pt'
+    class_list_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\coco.txt'
+
     model = YOLO(model_path)
-    cap = cv2.VideoCapture(video_path)
+    cap = cv2.VideoCapture(0)
 
     with open(class_list_path, "r") as f:
         class_list = f.read().split("\n")
@@ -104,7 +110,7 @@ def process_video(video_path, model_path, class_list_path):
     count = 0
     while True:
         if not paused:
-            ret, frame = cap.read()
+            ret, frame = cap.read(0)
             if not ret:
                 break
             #Frame skipping(every 3rd frame is being processed)
@@ -135,7 +141,8 @@ def process_video(video_path, model_path, class_list_path):
             cv2.putText(frame, ('Count-') + str(vehicle_down_count + vehicle_up_count), (60, 90),
                     cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 255, 255), 2)
 
-            cv2.imshow("Processed Video", frame)
+            # cv2.imshow("Processed Video", frame)
+            yield b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n'
 
         key= cv2.waitKey(1)
         if key==27: #press Esc to exit
@@ -148,7 +155,7 @@ def process_video(video_path, model_path, class_list_path):
 
 
 # Run the video processing
-video_path = 'C:/Users/Administrator/Desktop/video3.mp4'
-model_path = 'yolov8s.pt'
-class_list_path = 'C:/Users/Administrator/Desktop/Speed-detection-and-number-plate-recognition/speed_estimation/coco.txt'
-process_video(video_path, model_path, class_list_path)
+# video_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\video.mp4'
+# model_path = 'yolov8s.pt'
+# class_list_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\coco.txt'
+
