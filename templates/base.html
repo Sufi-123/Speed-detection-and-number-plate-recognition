@@ -21,6 +21,13 @@
       bottom: 5%;
       left: 2%;
     }
+    #video {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
 
     /* CSS styles for the small blue boxes on the right */
     .small-box {
@@ -39,18 +46,33 @@
   </style>
 </head>
 <body>
-  <div class="tv-container">
-    <div class="big-box"></div>
-    <div class="small-box">
-        <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;'>Start Camera</button>
-    </div>
-    <div class="small-box" style="top: 45%;">
-        <button style='width: 100px; height: 50px;font-weight: bold; font-size: large;'>Stop Camera</button></div>
-    <div class="small-box" style="top: 80%;">
+    <div class="tv-container">
+      <div class="big-box" id="video-container">
+        <img id="video-stream" src=""></img>
+      </div>
+      </div>
+      <div class="small-box">
+        <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;' onclick="startCamera()">Start Camera</button>
+      </div>
+      <div class="small-box" style="top: 45%;">
+        <button style='width: 100px; height: 50px;font-weight: bold; font-size: large;' onclick="stopCamera()">Stop Camera</button>
+      </div>
+      <div class="small-box" style="top: 80%;">
         <a href="/viewrecords">
             <button style='width: 100px; height: 50px; font-weight: bold; font-size: large;'>View Records</button>
         </a>
     </div>
-  </div>
+    
+    </div>
+  
+    <script>
+      function startCamera() {
+        document.getElementById("video-stream").src ="/video"  
+     }
+     function stopCamera() {
+        document.getElementById("video-stream").src =""  
+     }
+  
+    </script>
 </body>
 </html>

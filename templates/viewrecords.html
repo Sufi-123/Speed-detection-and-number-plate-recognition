@@ -40,8 +40,8 @@
             <td>{{viewrecord.liscenceplate_no}}</td>
             <td>{{viewrecord.speed}}</td>
             <td>50</td>
-            <!-- <td>{{viewrecord.limit_crossed}}</td> -->
-            <td>{{viewrecord.date}}</td>
+            
+            <td class="date-column">{{viewrecord.date}}</td>
           </tr>
           {% endfor %}
            
@@ -90,6 +90,9 @@
     }
   });
 
+  //creating dunction for download button
+
+
   function generateCSV() {
     // Retrieve selected date from the input
     const selectedDate = document.getElementById("datePicker").value;
@@ -98,16 +101,15 @@
     const table = document.getElementById("myTable");
     const rows = table.getElementsByTagName("tr");
     const filteredRows = Array.from(rows).filter(row => {
-      const dateColumn = row.querySelector(".Date"); // Replace with the appropriate selector for the date column
-      return dateColumn.textContent.trim() === selectedDate;
+      const dateColumn = row.querySelector(".date-column"); // Selector for the date column
+      return dateColumn && dateColumn.textContent.trim() === selectedDate;
     });
 
     // Prepare the CSV data
-    let csvData = "Date\n"; // Header row
+    let csvData = "SN,liscenceplate no,Speed,Date\n"; // Header row
     filteredRows.forEach(row => {
-      const dateColumn = row.querySelector(".Date"); // Replace with the appropriate selector for the date column
-      // const timeColumn = row.querySelector(".time-column"); // Replace with the appropriate selector for the time column
-      csvData += `${dateColumn.textContent.trim()},${timeColumn.textContent.trim()}\n`;
+      const rowData = Array.from(row.cells).map(cell => cell.textContent.trim());
+      csvData += rowData.join(",") + "\n";
     });
 
     // Trigger the download
@@ -120,4 +122,42 @@
     downloadLink.click();
     document.body.removeChild(downloadLink);
   }
+
+
+
+  // function generateCSV() {
+  //   // Retrieve selected date from the input
+  //   const selectedDate = document.getElementById("datePicker").value;
+
+  //   // Filter the records based on the selected date
+  //   const table = document.getElementById("myTable");
+  //   const rows = table.getElementsByTagName("tr");
+  //   const filteredRows = Array.from(rows).filter(row => {
+  //     const dateColumn = row.querySelector(".date-column"); // Replace with the appropriate selector for the date column
+  //     return dateColumn && dateColumn.textContent.trim() === selectedDate;
+  //   });
+
+  //   // Prepare the CSV data
+  //   let csvData = "SN,liscenceplate no,Speed,Date\n"; // Header row
+  //   filteredRows.forEach(row => {
+  //     const snColumn = row.querySelector("td:nth-child(1)"); // Replace with the appropriate selector for the SN column
+  //     const licensePlateColumn = row.querySelector("td:nth-child(2)"); // Replace with the appropriate selector for the license plate number column
+  //     const speedColumn = row.querySelector("td:nth-child(3)"); // Replace with the appropriate selector for the speed column
+  //     const dateColumn = row.querySelector(".date-column"); // Replace with the appropriate selector for the date column
+
+  //     csvData += `${snColumn.textContent.trim()},${licensePlateColumn.textContent.trim()},${speedColumn.textContent.trim()},${dateColumn.textContent.trim()}\n`;
+  //   });
+
+  //   // Trigger the download
+  //   const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+  //   const downloadLink = document.createElement("a");
+  //   downloadLink.href = URL.createObjectURL(blob);
+  //   downloadLink.download = "filtered_records.csv";
+  //   downloadLink.style.display = "none";
+  //   document.body.appendChild(downloadLink);
+  //   downloadLink.click();
+  //   document.body.removeChild(downloadLink);
+  // }
+
+
 </script>
