@@ -11,8 +11,8 @@ import math
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.2)  
-    center_y2 = int(frame_height * 0.4)  
+    center_y1 = int(frame_height * 0.55)  
+    center_y2 = int(frame_height * 0.8)  
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0.1)
     line_x2 = int(frame_width * 0.9)
@@ -150,7 +150,7 @@ def process_video(video_path, model_path, class_list_path):
 
 
 # Run the video processing
-video_path = 'C:/Users/Administrator/Desktop/Cars_Moving.mp4'
+video_path = 'C:/Users/Administrator/Desktop/video5.mp4'
 model_path = 'yolov8s.pt'
 class_list_path = 'C:/Users/Administrator/Desktop/Speed-detection-and-number-plate-recognition/speed_estimation/coco.txt'
 process_video(video_path, model_path, class_list_path)
