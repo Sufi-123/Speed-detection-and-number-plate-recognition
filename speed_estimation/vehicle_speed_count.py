@@ -11,8 +11,8 @@ import math
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.7)  
-    center_y2 = int(frame_height * 0.9)  
+    center_y1 = int(frame_height * 0.2)  
+    center_y2 = int(frame_height * 0.4)  
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0.1)
     line_x2 = int(frame_width * 0.9)
@@ -43,7 +43,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
         cy = int(y3 + y4) // 2
 
         #cv2.rectangle(frame, (int(x3), int(y3)), (int(x4), int(y4)), (255, 0, 255), 6, 1)
-
+        
         if center_y1 < (cy + offset) and center_y1 > (cy - offset):
             vehicle_down[id] = time.time()
         if id in vehicle_down:
@@ -55,6 +55,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     distance = abs(y4 - y3)  # Use the height of the bounding box as the distance
                     a_speed_ms = distance / elapsed_time
                     a_speed_kh = a_speed_ms * 3.6
+                    cv2.putText(frame, str(len(counter)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh, bbox, frame)
 
         if center_y2 < (cy + offset) and center_y2 > (cy - offset):
@@ -68,6 +69,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     distance1 = abs(y4 - y3)  # Use the height of the bounding box as the distance
                     a_speed_ms1 = distance1 / elapsed1_time
                     a_speed_kh1 = a_speed_ms1 * 3.6
+                    cv2.putText(frame, str(len(counter1)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh1, bbox, frame)
 
     cv2.line(frame, (line_x1, center_y1), (line_x2, center_y1), (255, 255, 255), 1)
@@ -148,7 +150,7 @@ def process_video(video_path, model_path, class_list_path):
 
 
 # Run the video processing
-video_path = 'C:/Users/Administrator/Desktop/video3.mp4'
+video_path = 'C:/Users/Administrator/Desktop/Cars_Moving.mp4'
 model_path = 'yolov8s.pt'
 class_list_path = 'C:/Users/Administrator/Desktop/Speed-detection-and-number-plate-recognition/speed_estimation/coco.txt'
 process_video(video_path, model_path, class_list_path)
