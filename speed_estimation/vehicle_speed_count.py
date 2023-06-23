@@ -11,8 +11,8 @@ import math
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.55)  
-    center_y2 = int(frame_height * 0.8)  
+    center_y1 = int(frame_height * 0.2)  
+    center_y2 = int(frame_height * 0.4)  
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0.1)
     line_x2 = int(frame_width * 0.9)
@@ -34,6 +34,7 @@ def check_speed(speed, bbox, frame):
         cv2.rectangle(frame, (int(x3), int(y3)), (int(x4), int(y4)), (0, 0, 255), 2)  # Set rectangle color to red
 
     return frame
+
 
 #Calculating the speed of the vehicle
 def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset,line_x1,line_x2,counter1):
@@ -91,12 +92,12 @@ def count_vehicles(counter, counter1):
 
 
 def process_video():
-    video_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\video.mp4'
+    video_path = r'speed_estimation\Cars_Moving.mp4'
     model_path = 'yolov8s.pt'
-    class_list_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\coco.txt'
+    class_list_path = r'speed_estimation\coco.txt'
 
     model = YOLO(model_path)
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(video_path)
 
     with open(class_list_path, "r") as f:
         class_list = f.read().split("\n")
@@ -155,7 +156,7 @@ def process_video():
 
 
 # Run the video processing
-# video_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\video.mp4'
+# video_path = r'speed_estimation\cars.mp4'
 # model_path = 'yolov8s.pt'
 # class_list_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\coco.txt'
 

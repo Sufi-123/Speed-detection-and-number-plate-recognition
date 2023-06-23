@@ -8,7 +8,7 @@ class Person (models.Model):
         return self.full_name
     
 class viewrecord(models.Model):
-    SN= models.IntegerField()
+    SN= models.IntegerField(primary_key=True)
     liscenceplate_no= models.IntegerField()
     speed= models.IntegerField()
     # limit= models.IntegerField()
