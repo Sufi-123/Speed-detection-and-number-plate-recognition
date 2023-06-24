@@ -3,10 +3,11 @@ import pandas as pd
 import numpy as np
 from ultralytics import YOLO
 from .tracker import *
-
+from user_app.models import viewrecord
 import time
 import math
-
+from datetime import datetime
+print("EXISTING DATA")
 #Calculating the axis position using the frame's shape and adjusting the percentage as needed
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
@@ -58,7 +59,15 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     a_speed_kh = a_speed_ms * 3.6
                     cv2.putText(frame, str(len(counter)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh, bbox, frame)
-
+                    print("new data added")#update the records in database (database connection)
+                    new_data = viewrecord(
+                    liscenceplate_no= 2,
+                    speed= a_speed_kh,
+                    date= datetime.now().date(),
+                    IDs= 5,
+                    count=len(counter)
+                    )
+                    new_data.save()
         if center_y2 < (cy + offset) and center_y2 > (cy - offset):
             vehicle_up[id] = time.time()
         if id in vehicle_up:
@@ -72,7 +81,15 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     a_speed_kh1 = a_speed_ms1 * 3.6
                     cv2.putText(frame, str(len(counter1)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh1, bbox, frame)
-
+                    print("new data added")#update the records in database (database connection)
+                    new_data = viewrecord(
+                    liscenceplate_no= 2,
+                    speed= a_speed_kh1,
+                    date= datetime.now().date(),
+                    IDs= 5,
+                    count=len(counter1)
+                    )
+                    new_data.save()
     cv2.line(frame, (line_x1, center_y1), (line_x2, center_y1), (255, 255, 255), 1)
     cv2.line(frame, (line_x1, center_y2), (line_x2, center_y2), (255, 255, 255), 1)
 
@@ -95,7 +112,6 @@ def process_video():
     video_path = r'speed_estimation\Cars_Moving.mp4'
     model_path = 'yolov8s.pt'
     class_list_path = r'speed_estimation\coco.txt'
-
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_path)
 
@@ -130,6 +146,7 @@ def process_video():
                 c = class_list[int(d)]
                 if c in ['car', 'motorcycle', 'truck', 'bus']:
                     object_list.append([x1, y1, x2, y2])
+                    
 
             center_y1, center_y2, offset,line_x1,line_x2 = calculate_axis_positions(frame)
 
@@ -138,19 +155,22 @@ def process_video():
             frame = speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset,line_x1,line_x2, counter1)
 
             vehicle_down_count, vehicle_up_count = count_vehicles(counter, counter1)
-
+            
+            print("NEW DATA: ")
             cv2.putText(frame, ('Count-') + str(vehicle_down_count + vehicle_up_count), (60, 90),
                     cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 255, 255), 2)
 
             # cv2.imshow("Processed Video", frame)
             yield b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n'
-
+        
         key= cv2.waitKey(1)
         if key==27: #press Esc to exit
             break
         elif key == ord('p') or key == ord('P'):#press P to pause
             paused = not paused
-
+    
+   
+    
     cap.release()
     cv2.destroyAllWindows()
 
@@ -159,4 +179,3 @@ def process_video():
 # video_path = r'speed_estimation\cars.mp4'
 # model_path = 'yolov8s.pt'
 # class_list_path = r'C:\Users\Puja\Desktop\aiproject\neha\Detection\obj_detection\coco.txt'
-

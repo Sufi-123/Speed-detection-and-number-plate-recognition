@@ -148,31 +148,15 @@
            
             {% for viewrecord in viewrecord_list %}
           <tr>
-            <td>{{viewrecord.SN}}</td>
+            <td>{{viewrecord.pk}}</td>
             <td>{{viewrecord.liscenceplate_no}}</td>
             <td>{{viewrecord.speed}}</td>
             <td>50</td>
             <td class="date-column">{{viewrecord.date}}</td>
-            <td>{{vehicle.ID}}</td>
-            <td>{{vehicle.count}}</td>
+            <td>{{viewrecord.IDs}}</td>
+            <td>{{viewrecord.count}}</td>
           </tr>
           {% endfor %}
-<!--            
-        </table>
-        <table>
-          <tr>
-            <th >ID</th>
-            <th >count</th>
-          </tr> -->
-
-
-          <!-- {% for viewrecord in viewrecord_list %}
-          <tr>
-            <td>{{vehicle.ID}}</td>
-            <td>{{vehicle.count}}</td>
-          </tr>
-          {% endfor %} -->
-
 
         </table>
 

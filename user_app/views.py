@@ -1,7 +1,7 @@
 from speed_estimation.vehicle_speed_count import process_video
 from django.shortcuts import render
 from django.http import HttpResponse, StreamingHttpResponse
-from .models import Person , viewrecord,vehicle
+from .models import Person , viewrecord,traffic
 
 # Create your views here.
 def home (request):
@@ -25,12 +25,19 @@ def viewrecords(request):
 
 
 
-def vehicle(request):
-    vehicle_list= vehicle.objects.all()
-    return render ( request ,'viewrecords.html',
-                   {'vehicle_list': vehicle_list})
 
 
+
+
+def traffics(request):
+    traffic_list= traffic.objects.all()
+    return render ( request ,'TrafficBooth/TrafficList.html',
+                   {'vehicle_list': traffic_list})
+
+
+# def trafficlist(request):
+# 	data = traffic(TrafficBooth=traffic,)
+#     data.save()
 
 
 from django.shortcuts import  render, redirect
