@@ -29,10 +29,23 @@ def viewrecords(request):
 
 
 
+
 def traffics(request):
     traffic_list= traffic.objects.all()
-    return render ( request ,'TrafficBooth/TrafficList.html',
-                   {'vehicle_list': traffic_list})
+    if request.method == 'POST':
+        TrafficBooth = request.POST['trafficBooth']
+        Areacode = request.POST['sn']
+        location = request.POST['areaCode']
+		
+
+        traffic_booth = traffic(TrafficBooth=TrafficBooth, Areacode=Areacode, location=location)
+        traffic_booth.save()
+	
+
+        return redirect('traffics')  # Replace 'traffic_list' with the URL name of your traffic list view
+
+    return render(request, 'TrafficList.html',
+		  {'traffic_list':traffic_list})  # Replace 'your_template.html' with the actual template file name
 
 
 # def trafficlist(request):

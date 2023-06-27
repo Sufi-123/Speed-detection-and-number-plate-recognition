@@ -26,7 +26,7 @@ class traffic(models.Model):
     TrafficBooth= models.IntegerField()
     Areacode= models.IntegerField()
     location= models.CharField(max_length=100)
-
+    
     
 def __int__(self) :
     return int(self.Areacode)

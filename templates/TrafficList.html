@@ -1,6 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 <head>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
   <title>Traffic List</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="style.css">
@@ -17,6 +20,7 @@
       <li><a href="#">Traffic List</a></li>
     </ul>
   </div>
+  
 
   <div class="container">
     <div class="button-container">
@@ -25,20 +29,24 @@
 
     <table>
       <tr>
-        <th>Traffic Booth</th>
-        <th>Area Code</th>
+        <th>TrafficBooth</th>
+        <th>AreaCode</th>
         <th>Location</th>
-        <th>Active</th>
-        <th>Edit</th>
+        
+       
       </tr>
+      {% for traffic in traffic_list %}
       <tr>
-        <td>Data 1</td>
-        <td>Data 2</td>
-        <td>Data 3</td>
-        <td>Data 4</td>
+        <td>{{traffic.TrafficBooth}}</td>
+        <td>{{traffic.Areacode}}</td>
+        <td>{{traffic.location}}</td>
         <td><button class="edit-button"><i class="fas fa-edit"></i> Edit</button></td>
+       
+        
       </tr>
+      {% endfor %}
     </table>
+    
   </div>
 
 
@@ -47,21 +55,26 @@
     <div class="message-box">
       <button id="closeButton" class="close-button">&times;</button>
       <h2>Register Traffic Booth</h2>
-      <form>
+      <form action="{% url 'traffics' %}" method="POST">
+        {% csrf_token %}
         <label for="trafficBooth">Traffic Booth:</label>
         <input type="text" id="trafficBooth" name="trafficBooth" required>
-
+    
         <label for="sn">Area Code</label>
         <input type="text" id="sn" name="sn" required>
-
+    
         <label for="areaCode">Location</label>
         <input type="text" id="areaCode" name="areaCode" required>
-
-        
+    
         <button type="submit">Submit</button>
-      </form>
+        
+        
+    </form>
     </div>
   </div>
+  
+  
+  
 
   <script>
     const addButton = document.getElementById('addButton');
