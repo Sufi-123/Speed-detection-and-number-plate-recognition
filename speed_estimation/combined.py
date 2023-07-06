@@ -3,16 +3,18 @@ import pytesseract
 import pandas as pd
 import numpy as np
 from ultralytics import YOLO
+# from speed_estimation.tracker import *
 from .tracker import *
 from user_app.models import viewrecord
 import time
 import math
 from datetime import datetime
+#import easyocr
 
 print("EXISTING DATA")
 
 # Load the number plate detection model
-number_plate_model = YOLO('Speed-detection-and-number-plate-recognition/models/best.pt')
+number_plate_model = YOLO('best.pt')
 
 # Preprocess the number plate region for OCR
 def preprocess_image(image):
@@ -21,12 +23,20 @@ def preprocess_image(image):
     _, threshold_image = cv2.threshold(grayscale_image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     return threshold_image
 
-# Perform OCR on the number plate region
+# Perform OCR on the number plate region(py tesseract)
 def perform_ocr(image):
     # Apply OCR using pytesseract
     text = pytesseract.image_to_string(image, config='--psm 7 --oem 3')
     return text
 
+# Perform OCR on the number plate region(easyocr)
+# def perform_ocr(image):
+#     # Perform OCR on the thresholded image
+#     recognized_plates=[]
+#     reader = easyocr.Reader(['en', 'ne'])
+#     result = reader.readtext(image, allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ', detail=0)
+#     recognized_plates = [''.join(result)]
+#     return recognized_plates
 
 #Calculating the axis position using the frame's shape and adjusting the percentage as needed
 def calculate_axis_positions(frame):
@@ -154,9 +164,9 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'speed_estimation\Cars_Moving.mp4'
+    video_path = r'Cars_Moving.mp4'
     model_path = 'yolov8s.pt'
-    class_list_path = r'speed_estimation\coco.txt'
+    class_list_path = r'coco.txt'
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_path)
 
@@ -203,7 +213,7 @@ def process_video():
             yield b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n'
         
         key = cv2.waitKey(1)
-        if key == 27:
+        if key == 27: #press Esc to exit
             break
         elif key == ord('p') or key == ord('P'):#press P to pause
             paused = not paused

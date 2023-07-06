@@ -1,0 +1,8 @@
+cv2= 
+django=
+pytesseract =
+pandas=
+numpy=
+ultralytics=
+easyocr=
+matplotlib= 
