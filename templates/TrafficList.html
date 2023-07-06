@@ -12,12 +12,12 @@
     <!-- Navigation bar -->
   <div class="navbar">
     <div class="logo-container">
-      <img src="" alt="Traffic Police">
+      <img src="https://www.shutterstock.com/image-vector/traffic-policeman-holding-stop-sign-260nw-640858120.jpg" alt="Traffic Police">
       <h1>Traffic List</h1>
     </div>
     <ul>
-      <li><a href="#">Traffic Rules</a></li>
-      <li><a href="#">Traffic List</a></li>
+      <li><a href="#">Notice</a></li>
+      <!-- <li><a href="#">Traffic List</a></li> -->
     </ul>
   </div>
   
@@ -80,6 +80,9 @@
     const addButton = document.getElementById('addButton');
     const overlay = document.getElementById('registration_overlay');
     const closeButton = document.getElementById('closeButton');
+    const areaCodeInput = document.getElementById('areaCode');
+
+    
 
     addButton.addEventListener('click', () => {
       overlay.style.display = 'block';
@@ -88,6 +91,17 @@
     closeButton.addEventListener('click', () => {
       overlay.style.display = 'none';
     });
+     // Add submit event listener to the form
+  const registrationForm = document.querySelector('#registration_overlay form');
+  registrationForm.addEventListener('submit', (event) => {
+    const areaCodeValue = areaCodeInput.value.trim();
+    if (!(/^\d+$/.test(areaCodeValue))) {
+      event.preventDefault(); // Prevent form submission
+      alert('Area code must only contain numeric values.');
+    }
+  });
+    
+    
   </script>
 </body>
 </html>

@@ -1,8 +1,9 @@
-cv2= 
-django=
 pytesseract =
 pandas=
 numpy=
 ultralytics=
 easyocr=
 matplotlib= 
+Django==4.2.2
+ultralytics==8.0.117
+opencv-python==4.7.0.72
