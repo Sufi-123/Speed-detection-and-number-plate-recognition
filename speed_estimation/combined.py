@@ -42,8 +42,8 @@ def perform_ocr(image):
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.2)  
-    center_y2 = int(frame_height * 0.4)  
+    center_y1 = int(frame_height * 0.1)  
+    center_y2 = int(frame_height * 0.2)  
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0.1)
     line_x2 = int(frame_width * 0.9)
@@ -67,10 +67,12 @@ def check_speed(speed, bbox, frame):
     return frame
 
 def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset, line_x1, line_x2, counter1):
+    number_plate_text=''#numberplate textholder
     for bbox in bbox_id:
         x3, y3, x4, y4, id = bbox
         cx = int(x3 + x4) // 2
         cy = int(y3 + y4) // 2
+
 
         # Perform number plate detection on the vehicle bounding box
 
@@ -101,6 +103,8 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                 print("Vehicle ID:", id, "Number Plate:", number_plate_text)
                 #eta bata database ma update huna parne
                 print("new data added")#update the records in database (database connection)
+            # print('number_plate_text'+number_plate_text)
+
                
 
 
@@ -120,8 +124,10 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     cv2.putText(frame, str(len(counter)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh, bbox, frame)
                     print("new data added")#update the records in database (database connection)
+                    print("new data added++++++++++++++++")#update the records in database (database connection)
+                    print(number_plate_text)
                     new_data = viewrecord(
-                    liscenceplate_no= 2,
+                    liscenceplate_no= number_plate_text,
                     speed= a_speed_kh,
                     date= datetime.now().date(),
                     IDs= 5,
@@ -141,9 +147,10 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     a_speed_kh1 = a_speed_ms1 * 3.6
                     cv2.putText(frame, str(len(counter1)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh1, bbox, frame)
-                    print("new data added")#update the records in database (database connection)
+                    print("new data added++++++++++++++++")#update the records in database (database connection)
+                    print(number_plate_text)
                     new_data = viewrecord(
-                    liscenceplate_no= 2,
+                    liscenceplate_no= number_plate_text,
                     speed= a_speed_kh1,
                     date= datetime.now().date(),
                     IDs= 5,
