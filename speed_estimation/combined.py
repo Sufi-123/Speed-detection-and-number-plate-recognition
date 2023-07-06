@@ -14,7 +14,7 @@ from datetime import datetime
 print("EXISTING DATA")
 
 # Load the number plate detection model
-number_plate_model = YOLO('best.pt')
+number_plate_model = YOLO('speed_estimation/best.pt')
 
 # Preprocess the number plate region for OCR
 def preprocess_image(image):
@@ -164,9 +164,9 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'Cars_Moving.mp4'
+    video_path = r'speed_estimation/Cars_Moving.mp4'
     model_path = 'yolov8s.pt'
-    class_list_path = r'coco.txt'
+    class_list_path = r'speed_estimation/coco.txt'
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_path)
 

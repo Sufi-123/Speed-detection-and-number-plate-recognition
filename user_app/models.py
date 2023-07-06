@@ -6,7 +6,7 @@ class viewrecord(models.Model):
     # user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
     # SN= models.IntegerField(primary_key=True)
-    liscenceplate_no= models.IntegerField()
+    liscenceplate_no= models.CharField(max_length=100)
     speed= models.IntegerField()
     # limit= models.IntegerField()
     # limit_crossed= models.IntegerField()

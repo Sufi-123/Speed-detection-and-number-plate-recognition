@@ -1,11 +1,14 @@
-from speed_estimation.vehicle_speed_count import process_video
+# from speed_estimation.vehicle_speed_count import process_video
+from speed_estimation.combined import process_video
 from django.shortcuts import render
 from django.http import HttpResponse, StreamingHttpResponse
-from .models import Person , viewrecord,traffic
+from .models import  viewrecord,traffic
+import csv
 
 # Create your views here.
 def home (request):
-    return render (request,'base.html')
+    viewrecord_list= viewrecord.objects.all()
+    return render (request,'base.html',{'viewrecord_list':viewrecord_list})
 
 # def viewrecords (request):
 #     return render (request,'viewrecords.html')
@@ -20,11 +23,41 @@ def video(request):
 
 def viewrecords(request):
     viewrecord_list= viewrecord.objects.all()
-    return render ( request ,'viewrecords.html',
-                   {'viewrecord_list': viewrecord_list})
+    context = {
+        'viewrecord_list': viewrecord_list
+    }
+    return render(request, 'viewrecords.html', context)
+
+def download_csv(request):
+    # Retrieve data from the database or any other source
+    records = viewrecord.objects.all()  # Fetch records from the ViewRecord model
+
+    # Create a response object with CSV content
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="view_records.csv"'
+
+    # Create a CSV writer and write the header row
+    writer = csv.writer(response)
+    writer.writerow(['SN', 'License Plate No', 'Speed', 'Date', 'ID', 'Count'])
+
+    # Write the data rows
+    for record in records:
+        writer.writerow([
+            record.pk,
+            record.liscenceplate_no,
+            record.speed,
+            record.date,
+            record.IDs,
+            record.count
+        ])
+
+    return response
+    
 
 
 
+def welcome_view(request):
+	return render(request,'welcome_dashboard.html')
 
 
 
