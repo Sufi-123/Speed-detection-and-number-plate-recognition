@@ -2,125 +2,7 @@
 <html>
 <head>
   <title>Video Streaming Web Platform</title>
-  <style>
-    
-    body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    /* background-image: linear-gradient(to right, #b6fbff, #83a4d4); */
-    }
-  
-   
-    .profile-bar {
-    background-color: #5162b9;
-    box-shadow: 0 4px 8px 0 grey, 0 6px 20px 0 grey;
-    color: #fff;
-    height: 50px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    }
-  
-    
-    .profile-info {
-    font-size: 18px;
-    }
-  
-
-    .content {
-    max-width: 800px;
-    margin: 50px auto;
-    text-align: center;
-    }
-
-  
-    .button-container {
-    margin-top: 20px;
-    position: absolute;
-    top: 85%;
-    bottom: 5%;
-    left: 15%;
-    }
-
-    button {
-    display: inline-block;
-      padding: 15px 25px;
-      margin: 10px 10;
-      font-size: 18px;
-      font-weight: bold;
-      color: #fff;
-      background-color: #333;
-      border: none;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-     
-    }
-
-    button:hover {
-    background-color: #ffc800;
-    }
-
-    button.start-camera {
-    background-color: #1abc9c;
-    color: #fff;
-    }
-
-    button.start-camera:hover {
-    background-color: #16a085;
-    }
-
-    button.stop-camera {
-    background-color: #e74c3c;
-    color: #fff;
-    }
-
-    button.stop-camera:hover {
-    background-color: #c0392b;
-    }
-
-    button.view-records {
-    background-color: #ae46d7;
-    color: #fff;
-    }
-
-    button.view-records:hover {
-    background-color: #8c47a9;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .side-box {
-    position: fixed;
-    box-shadow: 0 4px 8px 0 rgb(114, 157, 206), 0 6px 20px 0 rgb(174, 165, 227);
-    top: 18%;
-    right: 3%;
-    width: 320px;
-    height: 480px;
-    background-color: #6679d662;
-    padding: 10px;
-    border-radius: 5px;
-   }
-
-    .video-stream {
-      width: 1020;
-      height: 500;
-      background-color: #d820202e;
-      position: absolute;
-      top: 18%;
-      bottom: 5%;
-      left: 2%;
-    }
-    #video {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-  }
-   
-  </style>
+  <link rel="stylesheet" href="../static/css/base.css">
 </head>
 <body>
   <div class="profile-bar">
@@ -138,16 +20,72 @@
     <div class="button-container">
       <button class="start-camera" onclick="startCamera()">Start Camera</button>
       <button class="stop-camera" onclick="stopCamera()">Stop Camera</button>
+      <a href="/viewrecords">
       <button class="view-records">View Records</button>
+      </a>
     </div>
     <div class="side-box">
-      <h3 style="text-align: center;">DATA DISPLAY</h3>
+
+      <table  class="div_table">
+        <tbody class="table__body">
+        
+        <tr >
+            <th >SN</th>
+            <th>liscenceplate no</th>
+            <th>Speed</th>
+            <th >count</th>
+           
+        </tr>
+        
+        <tr>
+          <td>1</td>
+          <td>fdfdg</td>
+          <td>s45</td>
+          <td>13</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>fdfdg</td>
+          <td>s45</td>
+          <td>13</td>
+        </tr>
+      
+
+        {% for viewrecord in viewrecord_list %}
+          
+              <td>{{viewrecord.pk}}</td>
+              <td>{{viewrecord.liscenceplate_no}}</td>
+              <td>{{viewrecord.speed}}</td>
+              <td>{{viewrecord.count}}</td>
+         
+        {% endfor %} 
+      </tbody>
+
+    </table>
+
     </div>
    
   </div>
   
-  <!-- Add video player and other content here -->
   <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+      const table = document.getElementById('div_table');
+      const rows = table.getElementsByTagName('tr');
+      
+      for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
+        const limitCell = rows[i].getElementsByTagName('td')[3];
+        const speedCell = rows[i].getElementsByTagName('td')[2];
+        
+        const limit = parseInt(limitCell.innerText);
+        const Speed = parseInt(speedCell.innerText);
+        
+        if (Speed > limit) {
+          speedCell.style.backgroundColor = 'red';
+        }
+      }
+    });
+  <!-- Add video player and other content here -->
+  
     function startCamera() {
       document.getElementById("video-stream").src ="/video"  
    }
@@ -158,79 +96,3 @@
   </script>
 </body>
 </html>
-
-<!-- body {
-  margin: 0;
-  padding: 0;
-  background: url("https://th.bing.com/th/id/R.318380bfb6020055d8d1fb5ffd5133e6?rik=20%2fFFtQsE4aYzA&pid=ImgRaw&r=0") no-repeat center center fixed;
-  
- /* background: url("https://th.bing.com/th/id/R.392a9f335ca7e77a680795d7a23f4466?rik=t0BHnNJl%2bf5usQ&pid=ImgRaw&r=0 ") no-repeat center center fixed; */
-  background-size: cover;
-}
-
-.container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  height: 100vh;
-}
-
-.container .right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background-color: rgba(21, 53, 179, 0.295);
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.container .right h1 {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.container .right form {
-  display: flex;
-  flex-direction: column;
-}
-
-.container .right form input {
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-.container .right form button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.container .right form button:hover {
-  background-color: #0056b3;
-}
-
-.container .right p.text-center {
-  text-align: center;
-  margin-top: 20px;
-  color: aliceblue;
-}
-
-.container .right p.text-center a {
-  color: #86e7e5;
-  text-decoration: none;
-}
-
-.container .right p.text-center a:hover {
-  text-decoration: underline;
-  color: aliceblue
-
-} -->
