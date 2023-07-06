@@ -23,7 +23,7 @@ def __int__(self) :
 
 
 class traffic(models.Model):
-    TrafficBooth= models.IntegerField()
+    TrafficBooth= models.IntegerField(primary_key=True)
     Areacode= models.IntegerField()
     location= models.CharField(max_length=100)
     
