@@ -33,7 +33,7 @@ def check_speed(speed, bbox, frame):
         cv2.putText(frame, str(int(speed)) + 'Km/h', (int(x4), int(y4)), cv2.FONT_HERSHEY_COMPLEX, 0.8,
                     (0, 0, 255), 2)  # Set text color to red
         cv2.rectangle(frame, (int(x3), int(y3)), (int(x4), int(y4)), (0, 0, 255), 2)  # Set rectangle color to red
-
+    print('checking speed')
     return frame
 
 

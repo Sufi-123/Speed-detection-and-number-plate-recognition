@@ -1,13 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
-# Create your models here.
-class Person (models.Model):
-    full_name= models.CharField(max_length=100)
-    def __str__(self) :
-        return self.full_name
-    
 class viewrecord(models.Model):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+
     # SN= models.IntegerField(primary_key=True)
     liscenceplate_no= models.IntegerField()
     speed= models.IntegerField()
@@ -16,6 +13,7 @@ class viewrecord(models.Model):
     date= models.DateField()
     IDs= models.IntegerField()
     count= models.IntegerField()
+   
 
 
 def __int__(self) :
