@@ -64,7 +64,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     liscenceplate_no= 2,
                     speed= a_speed_kh,
                     date= datetime.now().date(),
-                    IDs= 5,
+                    IDs= 4,
                     count=len(counter)
                     )
                     new_data.save()
@@ -75,7 +75,8 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                 elapsed1_time = time.time() - vehicle_up[id]
                 if counter1.count(id) == 0:
                     counter1.append(id)
-                    # Calculate distance dynamically based on coordinates
+                    # Calculate distance dynamically based on coordin
+                    # ates
                     distance1 = abs(y4 - y3)  # Use the height of the bounding box as the distance
                     a_speed_ms1 = distance1 / elapsed1_time
                     a_speed_kh1 = a_speed_ms1 * 3.6
@@ -86,7 +87,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     liscenceplate_no= 2,
                     speed= a_speed_kh1,
                     date= datetime.now().date(),
-                    IDs= 5,
+                    IDs= 4,
                     count=len(counter1)
                     )
                     new_data.save()
