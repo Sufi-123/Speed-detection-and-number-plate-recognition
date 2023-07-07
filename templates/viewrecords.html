@@ -14,9 +14,10 @@
       {% endif %}
 
       <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search" oninput="searchTable()">
+        <input type="text" id="searchInput" placeholder="Search" oninput="searchTable() ; updateDownloadLink();">
         <select id="searchOption" style="background-color: #f2f2f2; color: #333; font-size: 13px; padding: 4px; border-radius: 6px;">
           <option value="license">License Plate</option>
+          <option value="speed">Speed</option>
           <option value="date">Date</option>
         </select>
       </div>
@@ -53,7 +54,8 @@
       <p align="center" id="notFoundMessage" style="display: none;">Record Not Found</p>
 
       <p align="right">
-        <a href="{% url 'download_csv' %}" class="download-btn">Download CSV</a>
+        <!-- <a href="{% url 'download_csv' %}" class="download-btn">Download CSV</a> -->
+        <a id="downloadCsvLink" href="#" class="download-btn">Download CSV</a>
     </p>
 
   
@@ -70,7 +72,7 @@
     for (let i = 1; i < rows.length; i++) {
       const limitCell = rows[i].getElementsByTagName('td')[3];
       const speedCell = rows[i].getElementsByTagName('td')[2];
-
+      
       const limit = parseInt(limitCell.innerText);
       const speed = parseInt(speedCell.innerText);
 
@@ -91,6 +93,9 @@
       const licensePlateCell = rows[i].getElementsByTagName('td')[1];
       const licensePlate = licensePlateCell.innerText.toUpperCase();
 
+      const speedCell = rows[i].getElementsByTagName('td')[2];
+      const speed = speedCell.innerText.toUpperCase();
+
       const dateCell = rows[i].getElementsByTagName('td')[4];
       const date = dateCell.innerText.toUpperCase();
 
@@ -100,6 +105,10 @@
         rows[i].style.display = '';
         matchFound = true;
         highlightCell(licensePlateCell, input);
+      } else if ((option === 'speed' && speed.includes(input))) {
+        rows[i].style.display = '';
+        matchFound = true;
+        highlightCell(speedCell, input);
       } else if ((option === 'date' && date.includes(input))) {
         rows[i].style.display = '';
         matchFound = true;
@@ -120,6 +129,23 @@
   const highlightedText = cellText.replace(regex, '<span style="background-color: yellow;">$1</span>');
   cell.innerHTML = highlightedText;
 }
-  
+
+function updateDownloadLink() {
+    const downloadLink = document.getElementById('downloadCsvLink');
+    const searchInput = document.getElementById('searchInput').value;
+    const searchOption = document.getElementById('searchOption').value;
+
+    let downloadUrl = "{% url 'download_csv' %}";
+
+    if (searchInput && searchOption === 'license') {
+      downloadUrl += "?license=" + searchInput;
+    } else if (searchInput && searchOption === 'speed') {
+      downloadUrl += "?speed=" + searchInput;
+    } else if (searchInput && searchOption === 'date') {
+      downloadUrl += "?date=" + searchInput;
+    }
+
+    downloadLink.href = downloadUrl;
+  }
 </script>
 

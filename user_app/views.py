@@ -30,7 +30,22 @@ def viewrecords(request):
 
 def download_csv(request):
     # Retrieve data from the database or any other source
-    records = viewrecord.objects.all()  # Fetch records from the ViewRecord model
+    # records = viewrecord.objects.all()  # Fetch records from the ViewRecord model
+    license = request.GET.get('license')
+    speed = request.GET.get('speed')
+    date = request.GET.get('date')
+
+    # Retrieve filtered records based on the search criteria
+    filtered_records = viewrecord.objects.all()  # Fetch all records by default
+
+    if license:
+        filtered_records = filtered_records.filter(licenseplate_no__icontains=license)
+
+    if speed:
+        filtered_records = filtered_records.filter(speed__icontains=speed)
+	
+    if date:
+        filtered_records = filtered_records.filter(date__icontains=date)
 
     # Create a response object with CSV content
     response = HttpResponse(content_type='text/csv')
@@ -41,7 +56,7 @@ def download_csv(request):
     writer.writerow(['SN', 'License Plate No', 'Speed', 'Date', 'ID', 'Count'])
 
     # Write the data rows
-    for record in records:
+    for record in filtered_records:
         writer.writerow([
             record.pk,
             record.liscenceplate_no,
