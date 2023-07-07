@@ -14,8 +14,13 @@
       {% endif %}
 
       <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search by License Plate">
-    </div>
+        <input type="text" id="searchInput" placeholder="Search" oninput="searchTable()">
+        <select id="searchOption" style="background-color: #f2f2f2; color: #333; font-size: 13px; padding: 4px; border-radius: 6px;">
+          <option value="license">License Plate</option>
+          <option value="date">Date</option>
+        </select>
+      </div>
+ 
     <!-- <div class="page-container">
       <input type="number" id="pageInput" placeholder="Page">
   </div> -->
@@ -38,13 +43,15 @@
             <td>{{viewrecord.liscenceplate_no}}</td>
             <td>{{viewrecord.speed}}</td>
             <td>50</td>
-            <td class="date-column">{{viewrecord.date}}</td>
+            <td class="date-column">{{viewrecord.date|date:"d/m/Y"}}</td>  
             <td>{{viewrecord.IDs}}</td>
             <td>{{viewrecord.count}}</td>
           </tr>
           {% endfor %}
-
         </table>
+
+      <p align="center" id="notFoundMessage" style="display: none;">Record Not Found</p>
+
       <p align="right">
         <a href="{% url 'download_csv' %}" class="download-btn">Download CSV</a>
     </p>
@@ -59,18 +66,60 @@
   window.addEventListener('DOMContentLoaded', (event) => {
     const table = document.getElementById('myTable');
     const rows = table.getElementsByTagName('tr');
-    
-    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
+
+    for (let i = 1; i < rows.length; i++) {
       const limitCell = rows[i].getElementsByTagName('td')[3];
       const speedCell = rows[i].getElementsByTagName('td')[2];
-      
+
       const limit = parseInt(limitCell.innerText);
-      const Speed = parseInt(speedCell.innerText);
-      
-      if (Speed > limit) {
+      const speed = parseInt(speedCell.innerText);
+
+      if (speed > limit) {
         speedCell.style.backgroundColor = 'red';
       }
     }
   });
 
-  </script>
+  function searchTable() {
+    const input = document.getElementById('searchInput').value.toUpperCase();
+    const option = document.getElementById('searchOption').value;
+    const table = document.getElementById('myTable');
+    const rows = table.getElementsByTagName('tr');
+    let matchFound = false;
+
+    for (let i = 1; i < rows.length; i++) {
+      const licensePlateCell = rows[i].getElementsByTagName('td')[1];
+      const licensePlate = licensePlateCell.innerText.toUpperCase();
+
+      const dateCell = rows[i].getElementsByTagName('td')[4];
+      const date = dateCell.innerText.toUpperCase();
+
+      if (
+        (option === 'license' && licensePlate.includes(input)) 
+      ) {
+        rows[i].style.display = '';
+        matchFound = true;
+        highlightCell(licensePlateCell, input);
+      } else if ((option === 'date' && date.includes(input))) {
+        rows[i].style.display = '';
+        matchFound = true;
+        highlightCell(dateCell, input);
+      } 
+      else {
+        rows[i].style.display = 'none';
+      }
+    }
+
+    const notFoundMessage = document.getElementById('notFoundMessage');
+    notFoundMessage.style.display = matchFound ? 'none' : 'block';
+  }
+
+  function highlightCell(cell, input) {
+  const cellText = cell.innerText;
+  const regex = new RegExp(`(${input})`, 'gi');
+  const highlightedText = cellText.replace(regex, '<span style="background-color: yellow;">$1</span>');
+  cell.innerHTML = highlightedText;
+}
+  
+</script>
+
