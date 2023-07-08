@@ -1,5 +1,9 @@
 import cv2
+<<<<<<< HEAD
 #import pytesseract
+=======
+# import pytesseract
+>>>>>>> 5078a24df585fb057586badece9f77e3e30261af
 import numpy as np
 import pandas as pd
 # import pandas as pd
