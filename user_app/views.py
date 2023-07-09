@@ -4,6 +4,36 @@ from django.shortcuts import render
 from django.http import HttpResponse, StreamingHttpResponse
 from .models import  viewrecord,traffic
 import csv
+from .visualize import generate_bar_graph, generate_line_graph
+
+
+def view_records(request):
+    limit = 50  # Speed limit value
+    records = viewrecord.objects.order_by('speed')[:20][::-1]  # Get the bottom 20 records by speed
+    exceeded_limit = [record for record in records if record.speed > limit]
+    within_limit = [record for record in records if record.speed <= limit]
+    speeds = [record.speed for record in records]
+
+    # Generate the line graph
+    
+    generate_line_graph(speeds)
+    graph_path='../static/graph.png'
+    # graph_path ='../static/graph.png'
+
+    # Generate the bar graph
+    # chart_path = generate_bar_graph(exceeded_limit, within_limit)
+
+    context={
+        #   'chart_path': chart_path
+        'graph_path': graph_path,
+          
+
+    }
+
+    # Pass the chart file path to the template
+    # return render(request, 'chart.html', {'chart_path': chart_path, 'graph_path': graph_path})
+    return render(request, 'chart.html',context)
+
 
 # Create your views here.
 def home (request):
