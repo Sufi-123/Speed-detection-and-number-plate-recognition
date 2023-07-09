@@ -25,6 +25,8 @@ def viewrecords(request):
     return render ( request ,'viewrecords.html',
                    {'viewrecord_list': viewrecord_list})
 
+def notice(request):
+    return render ( request ,'notice.html',)
 
 def welcome_view(request):
 	return render(request,'welcome_dashboard.html')
