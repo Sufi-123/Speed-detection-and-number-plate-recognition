@@ -1,3 +1,69 @@
+/* CSS sidenavigation */
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  /* background-color: #f2f2f2; */
+  overflow-x: hidden;
+  padding-top: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add box shadow */
+}
+
+.sidenav .sidenav-content {
+  margin-top: 20px;
+}
+.sidenav .sidenav-content a {
+  margin: 6px;
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 16px;
+  color: #333;
+  display: block;
+}
+
+.sidenav .sidenav-content a:hover {
+  background-color: #ddd;
+}
+
+.sidenav .sidenav-content i{
+  color: #5162b9;
+  margin-right: 5px;
+}
+
+.sidenav .logo-container {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  /* background-color: #ddd; */
+  margin-bottom: 35px;
+  
+}
+
+.sidenav .logo-container img {
+  width: 32px;
+  height: 32px;
+  margin-right: 15px;
+  /* border-radius: 50%; */
+}
+
+.sidenav .logo-container h1 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.sidenav .sidenav-bottom-section {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 16px;
+  /* background-color: #ddd; */
+}
+
 /* CSS for the navigation bar */
 .navbar {
   display: flex;
@@ -28,10 +94,13 @@
   margin: 0;
   padding: 0;
   display: flex;
+  justify-content: space-around;
 }
 
 .navbar ul li {
   margin-left: 10px;
+  
+  
 }
 
 .navbar ul li a{
@@ -199,3 +268,43 @@ th, td {
   }
 
 
+
+
+  
+    /* CSS for the content section */
+    .content {
+      margin-left: 200px; /* Same width as the side navigation */
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 40px);
+      border-radius: 10px;
+    }
+
+    .top-section {
+      background-color: #f2f2f2;
+      padding: 20px;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .bottom-section {
+      display: flex;
+      justify-content: space-between;
+      height: 50%;
+    }
+    .bottom-section .right{
+      width: 30%;
+    }
+    
+    .bottom-section .right{
+      width: 70%;
+    }
+    
+    .bottom-section .left,
+    .bottom-section .right {
+      /* width: 50%; */
+      background-color: #f2f2f2;
+      padding: 0;
+      margin: 10px;
+    }

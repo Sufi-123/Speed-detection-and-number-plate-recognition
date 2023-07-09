@@ -31,6 +31,11 @@ def notice(request):
 def welcome_view(request):
 	return render(request,'welcome_dashboard.html')
 
+def dotm(request):
+	return render(request,'dotm_dashboard.html')
+
+def home(request):
+	return render(request,'home.html')
 
 
 

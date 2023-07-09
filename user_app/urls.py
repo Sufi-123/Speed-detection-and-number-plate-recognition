@@ -10,6 +10,7 @@ urlpatterns = [
    path("traffics/",views.traffics,name='traffics'),
    path ("welcome/",views.welcome_view,name='welcome_Dashboard'),
    path ("notice/",views.notice,name='notice'),
-   
+   path ("dotm/",views.dotm,name="dotm_Dashboard"),
+   path ("home/",views.home,name="home"),
    
 ]
