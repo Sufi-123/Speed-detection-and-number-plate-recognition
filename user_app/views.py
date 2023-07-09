@@ -4,34 +4,54 @@ from django.shortcuts import render
 from django.http import HttpResponse, StreamingHttpResponse
 from .models import  viewrecord,traffic
 import csv
-from .visualize import generate_bar_graph, generate_line_graph
+from collections import defaultdict
+from .visualize import generate_bar_graph, generate_line_graph,generate_permonth_graph,generate_perday_graph
+
 
 
 def view_records(request):
     limit = 50  # Speed limit value
     records = viewrecord.objects.order_by('speed')[:20][::-1]  # Get the bottom 20 records by speed
+    new_record= viewrecord.objects.order_by('speed')
+    # Aggregate the number of vehicles per day
+    day_count = defaultdict(int)
+    for record in new_record:
+        if record.speed > limit:
+            day_count[record.date.strftime('%d/%m/%Y')] += 1
+
+    # Extract the day-month-year labels and count values
+    label1 = list(day_count.keys())
+    count1 = list(day_count.values())
+
+
+    # Aggregate the number of vehicles exceeding the speed limit per month
+    month_count = defaultdict(int)
+    for record in new_record:
+        if record.speed > limit:
+            month_count[record.date.strftime('%m/%Y')] += 1
+
+    # Extract the month-year labels and count values
+    labels = list(month_count.keys())
+    counts = list(month_count.values())
+
     exceeded_limit = [record for record in records if record.speed > limit]
     within_limit = [record for record in records if record.speed <= limit]
     speeds = [record.speed for record in records]
 
     # Generate the line graph
-    
-    generate_line_graph(speeds)
-    graph_path='../static/graph.png'
-    # graph_path ='../static/graph.png'
-
-    # Generate the bar graph
-    # chart_path = generate_bar_graph(exceeded_limit, within_limit)
+    graph_path=generate_line_graph(speeds)
+    chart_path = generate_bar_graph(exceeded_limit, within_limit)
+    permonth_path= generate_permonth_graph(labels, counts)
+    perday_path= generate_perday_graph(label1, count1)
 
     context={
-        #   'chart_path': chart_path
+        'chart_path': chart_path,
         'graph_path': graph_path,
+        'permonth_path' : permonth_path,
+        'perday_path' : perday_path
           
 
     }
-
-    # Pass the chart file path to the template
-    # return render(request, 'chart.html', {'chart_path': chart_path, 'graph_path': graph_path})
     return render(request, 'chart.html',context)
 
 
@@ -39,9 +59,6 @@ def view_records(request):
 def home (request):
     viewrecord_list= viewrecord.objects.all()
     return render (request,'base.html',{'viewrecord_list':viewrecord_list})
-
-# def viewrecords (request):
-#     return render (request,'viewrecords.html')
 
 
 from django.shortcuts import render

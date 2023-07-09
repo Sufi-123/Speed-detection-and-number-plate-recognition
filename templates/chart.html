@@ -4,11 +4,17 @@
     <title>Chart</title>
 </head>
 <body>
-    <!-- <h2>Bar graph of exceeded speed limit VS Within Speed limit</h2>
-    <img src="{{ chart_path }}" alt="Chart"> -->
+    <h2>Bar graph of exceeded speed limit VS Within Speed limit</h2>
+    <img src="data:image/png;base64,{{ chart_path }}" alt="Chart">
 
     <h2>Graph of Speed of moving vehicles</h2>
-    <img src="{{ graph_path }}" alt="Graph">
+    <img src="data:image/png;base64,{{ graph_path }}" alt="Graph">
+
+    <h2>Bar graph of Speed voilators per month</h2>
+    <img src="data:image/png;base64,{{ permonth_path }}" alt="Graph">
+
+    <h2>Bar graph of number of voilators per day</h2>
+    <img src="data:image/png;base64,{{ perday_path }}" alt="Graph">
 
 
 </body>
