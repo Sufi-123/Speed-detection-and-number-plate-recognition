@@ -39,8 +39,8 @@ def traffics(request):
     traffic_list= traffic.objects.all()
     if request.method == 'POST':
         TrafficBooth = request.POST['trafficBooth']
-        Areacode = request.POST['sn']
-        location = request.POST['areaCode']
+        Areacode = request.POST['areaCode']
+        location = request.POST['location']
 		
 
         traffic_booth = traffic(TrafficBooth=TrafficBooth, Areacode=Areacode, location=location)
