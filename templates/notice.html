@@ -1,29 +1,7 @@
+{% extends 'dotm_Dashboard.html' %}
+{% block body_block %}
 
-<!DOCTYPE html>
-<html>
-<head>
-  {% load static %}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-  <link rel="stylesheet" href="style.css">
-  <title>Notice</title>
-</head>
-<body>
-
-  <!-- Navigation bar -->
-  <div class="navbar">
-    <div class="logo-container">
-      <img src="https://www.shutterstock.com/image-vector/traffic-policeman-holding-stop-sign-260nw-640858120.jpg" alt="Traffic Police">
-      <h1>Notice</h1>
-    </div>
-    <ul>
-      <li><a href="/dotm">Dashboard</a></li>
-      <li><a href="/traffics">Traffic List</a></li>
-      
-      
-    </ul>
-  </div>
-
-  <div class="button-container">
+  
     <div class="upload-container">
       <label for="fileInput" class="upload-button">Upload</label>
       <input type="file" id="fileInput" accept=".pdf, .jpeg, .jpg">
@@ -107,5 +85,5 @@
     
 
   </script>
-</body>
-</html>
+
+{% endblock %}

@@ -34,9 +34,11 @@ def welcome_view(request):
 def dotm(request):
 	return render(request,'dotm_dashboard.html')
 
-def home(request):
-	return render(request,'home.html')
+def dotm_home(request):
+	return render(request,'dotm_home.html')
 
+def chart(request):
+	return render(request,'chart.html')
 
 
 

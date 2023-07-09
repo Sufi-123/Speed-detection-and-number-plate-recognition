@@ -1,28 +1,7 @@
+{% extends 'dotm_Dashboard.html'%}
 
-<!DOCTYPE html>
-<html>
-<head>
-  {% load static %}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-  <title>Traffic List</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <!-- Navigation bar -->
-  <div class="navbar">
-    <div class="logo-container">
-      <img src="https://www.shutterstock.com/image-vector/traffic-policeman-holding-stop-sign-260nw-640858120.jpg" alt="Traffic Police">
-      <h1>Traffic List</h1>
-    </div>
-    <ul>
-       <li><a href="/dotm">Dashboard</a></li>
-      <li><a href="/notice">Notice</a></li>
-     
-    </ul>
-  </div>
-  
 
+{% block body_block %}
   <div class="container">
     <div class="button-container">
       <button id="addButton"><i class="fas fa-plus" style="margin-right: 10px;"></i> Add</button>
@@ -104,5 +83,5 @@
     
     
   </script>
-</body>
-</html>
+
+{% endblock %}

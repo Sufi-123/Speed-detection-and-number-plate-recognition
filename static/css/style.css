@@ -7,7 +7,8 @@
   z-index: 1;
   top: 0;
   left: 0;
-  /* background-color: #f2f2f2; */
+  background-color: #5162b9;
+  color:#fff;
   overflow-x: hidden;
   padding-top: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add box shadow */
@@ -21,7 +22,7 @@
   padding: 6px 8px 6px 16px;
   text-decoration: none;
   font-size: 16px;
-  color: #333;
+  color: #fff;
   display: block;
 }
 
@@ -30,7 +31,7 @@
 }
 
 .sidenav .sidenav-content i{
-  color: #5162b9;
+  color: #fff;
   margin-right: 5px;
 }
 
@@ -61,58 +62,10 @@
   bottom: 0;
   width: 100%;
   padding: 16px;
-  /* background-color: #ddd; */
+  border-top: 1px solid #fff;
 }
 
-/* CSS for the navigation bar */
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  background-color:  #5162b9;
-  color: #fff;
-}
-
-.navbar .logo-container {
-  display: flex;
-  align-items: center;
-}
-
-.navbar img {
-  height: 50px;
-  margin-right: 10px;
-}
-
-.navbar h1 {
-  margin: 20px;
-  font-size: 24px;
-}
-
-.navbar ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: space-around;
-}
-
-.navbar ul li {
-  margin-left: 10px;
-  
-  
-}
-
-.navbar ul li a{
-    text-decoration: none;
-    color: #fff;
-  }
-  
-
-.navbar ul li:last-child {
-  margin-right: 20px;
-}
-
+/* For traffic List */
 .container {
   margin: 20px;
 }
@@ -141,6 +94,8 @@ th, td {
   border-bottom: 1px solid #ddd;
 }
 
+
+/* For the overlay of traffic list */
 .registration_overlay {
     display: none;
     position: fixed;
@@ -205,13 +160,9 @@ th, td {
   }
   
 
-  /* notice.html style */
 
-  
-  .button-container {
-    margin: 20px;
-  }
-
+  /* For notice */
+ 
   .upload-container {
     float: right;
     margin-right: 10px;
@@ -267,44 +218,43 @@ th, td {
     display: none;
   }
 
+ /* for the home */
+ .content {
+  margin-left: 200px; /* Same width as the side navigation */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+  border-radius: 10px;
+}
 
+.top-section {
+  background-color:#b4daef;
+  padding: 20px;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.bottom-section {
+  display: flex;
+  justify-content: space-between;
+  height: 50%;
+}
+.bottom-section .right{
+  width: 30%;
+}
+
+.bottom-section .left{
+  width: 70%;
+}
+
+.bottom-section .left,
+.bottom-section .right {
+  background-color:#b4daef;
+  padding: 0;
+  margin: 10px;
+}
 
 
   
-    /* CSS for the content section */
-    .content {
-      margin-left: 200px; /* Same width as the side navigation */
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 40px);
-      border-radius: 10px;
-    }
-
-    .top-section {
-      background-color: #f2f2f2;
-      padding: 20px;
-      margin-bottom: 20px;
-      flex-grow: 1;
-    }
-
-    .bottom-section {
-      display: flex;
-      justify-content: space-between;
-      height: 50%;
-    }
-    .bottom-section .right{
-      width: 30%;
-    }
     
-    .bottom-section .right{
-      width: 70%;
-    }
-    
-    .bottom-section .left,
-    .bottom-section .right {
-      /* width: 50%; */
-      background-color: #f2f2f2;
-      padding: 0;
-      margin: 10px;
-    }
