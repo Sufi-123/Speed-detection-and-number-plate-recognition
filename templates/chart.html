@@ -1,7 +1,22 @@
-{% extends 'dotm_Dashboard.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart</title>
+</head>
+<body>
+    <h2>Bar graph of exceeded speed limit VS Within Speed limit</h2>
+    <img src="data:image/png;base64,{{ chart_path }}" alt="Chart">
 
-{% block body_block %}
+    <h2>Graph of Speed of moving vehicles</h2>
+    <img src="data:image/png;base64,{{ graph_path }}" alt="Graph">
 
-    <!-- code here -->
+    <h2>Bar graph of Speed voilators per month</h2>
+    <img src="data:image/png;base64,{{ permonth_path }}" alt="Graph">
 
-{% endblock %}
+    <h2>Bar graph of number of Speed voilators per day</h2>
+    <img src="data:image/png;base64,{{ perday_path }}" alt="Graph">
+
+
+</body>
+</html>
+

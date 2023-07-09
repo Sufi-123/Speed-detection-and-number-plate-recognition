@@ -3,14 +3,62 @@ from speed_estimation.combined import process_video
 from django.shortcuts import render
 from django.http import HttpResponse, StreamingHttpResponse
 from .models import  viewrecord,traffic
+import csv
+from collections import defaultdict
+from .visualize import generate_bar_graph, generate_line_graph,generate_permonth_graph,generate_perday_graph
+
+
+
+def view_records(request):
+    limit = 50  # Speed limit value
+    records = viewrecord.objects.order_by('speed')[:20][::-1]  # Get the bottom 20 records by speed
+    new_record= viewrecord.objects.order_by('speed')
+    # Aggregate the number of vehicles per day
+    day_count = defaultdict(int)
+    for record in new_record:
+        if record.speed > limit:
+            day_count[record.date.strftime('%d/%m/%Y')] += 1
+
+    # Extract the day-month-year labels and count values
+    label1 = list(day_count.keys())
+    count1 = list(day_count.values())
+
+
+    # Aggregate the number of vehicles exceeding the speed limit per month
+    month_count = defaultdict(int)
+    for record in new_record:
+        if record.speed > limit:
+            month_count[record.date.strftime('%m/%Y')] += 1
+
+    # Extract the month-year labels and count values
+    labels = list(month_count.keys())
+    counts = list(month_count.values())
+
+    exceeded_limit = [record for record in records if record.speed > limit]
+    within_limit = [record for record in records if record.speed <= limit]
+    speeds = [record.speed for record in records]
+
+    # Generate the line graph
+    graph_path=generate_line_graph(speeds)
+    chart_path = generate_bar_graph(exceeded_limit, within_limit)
+    permonth_path= generate_permonth_graph(labels, counts)
+    perday_path= generate_perday_graph(label1, count1)
+
+    context={
+        'chart_path': chart_path,
+        'graph_path': graph_path,
+        'permonth_path' : permonth_path,
+        'perday_path' : perday_path
+          
+
+    }
+    return render(request, 'chart.html',context)
+
 
 # Create your views here.
 def home (request):
     viewrecord_list= viewrecord.objects.all()
     return render (request,'base.html',{'viewrecord_list':viewrecord_list})
-
-# def viewrecords (request):
-#     return render (request,'viewrecords.html')
 
 
 from django.shortcuts import render
@@ -22,8 +70,52 @@ def video(request):
 
 def viewrecords(request):
     viewrecord_list= viewrecord.objects.all()
-    return render ( request ,'viewrecords.html',
-                   {'viewrecord_list': viewrecord_list})
+    context = {
+        'viewrecord_list': viewrecord_list
+    }
+    return render(request, 'viewrecords.html', context)
+
+def download_csv(request):
+    # Retrieve data from the database or any other source
+    # records = viewrecord.objects.all()  # Fetch records from the ViewRecord model
+    license = request.GET.get('license')
+    speed = request.GET.get('speed')
+    date = request.GET.get('date')
+
+    # Retrieve filtered records based on the search criteria
+    filtered_records = viewrecord.objects.all()  # Fetch all records by default
+
+    if license:
+        filtered_records = filtered_records.filter(licenseplate_no__icontains=license)
+
+    if speed:
+        filtered_records = filtered_records.filter(speed__icontains=speed)
+	
+    if date:
+        filtered_records = filtered_records.filter(date__icontains=date)
+
+    # Create a response object with CSV content
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="view_records.csv"'
+
+    # Create a CSV writer and write the header row
+    writer = csv.writer(response)
+    writer.writerow(['SN', 'License Plate No', 'Speed', 'Date', 'ID', 'Count'])
+
+    # Write the data rows
+    for record in filtered_records:
+        writer.writerow([
+            record.pk,
+            record.liscenceplate_no,
+            record.speed,
+            record.date,
+            record.IDs,
+            record.count
+        ])
+
+    return response
+    
+
 
 def notice(request):
     return render ( request ,'notice.html',)

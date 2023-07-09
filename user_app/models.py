@@ -13,6 +13,9 @@ class viewrecord(models.Model):
     date= models.DateField()
     IDs= models.IntegerField()
     count= models.IntegerField()
+
+    def __str__(self):
+        return self.date.strftime("%d/%m/%Y")
    
 
 
