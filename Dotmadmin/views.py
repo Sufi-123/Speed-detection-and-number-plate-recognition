@@ -62,9 +62,21 @@ def register_station(request):
 
 def traffics(request):
     Station_list= Station.objects.all()
-    
+    if request.method == 'POST':
+        stationID = request.POST['stationID']
+        Areacode = request.POST['areaCode']
+        location = request.POST['location']
+        mac_address = request.POST['mac_address']
+
+
+        station_booth = Station(IDs=stationID, areacode=Areacode, location=location, mac_address=mac_address)
+        station_booth.save()
+
+
+        return redirect('traffics')  # Replace 'traffic_list' with the URL name of your traffic list view
+
     return render(request, 'station_list.html',
-		  {'Station_list':Station_list}) 
+          {'Station_list':Station_list})  # Replace 'your_template.html' with the actual template file name
             
 
  
