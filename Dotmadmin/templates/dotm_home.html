@@ -1,0 +1,52 @@
+
+{% extends 'dotm_Dashboard.html' %}
+
+{% block body_block %}
+
+
+<div class="top-section">
+  <!-- Top section content goes here -->
+</div>
+<div class="bottom-section">
+  <div class="left">
+    <h3>Traffic List</h3>
+    <table>
+      <tr>
+        <th>TrafficBooth</th>
+        <th>AreaCode</th>
+        <th>Location</th>
+        
+       
+      </tr>
+      {% for traffic in traffic_list %}
+      <tr>
+        <td>{{traffic.TrafficBooth}}</td>
+        <td>{{traffic.Areacode}}</td>
+        <td>{{traffic.location}}</td>
+        <td><button class="edit-button"><i class="fas fa-edit"></i> Edit</button></td>
+       
+        
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="right">
+    <!-- Right section content goes here -->
+    
+      <h3>Notice</h3>
+      <table id="fileTable">
+        <thead>
+          <tr>
+            <th>Notice</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+  
+        <tbody>
+        </tbody>
+  
+      </table>
+  </div>
+</div>
+
+  {% endblock %}

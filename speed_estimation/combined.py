@@ -1,20 +1,21 @@
 import cv2
-#import pytesseract
-import numpy as np
+import pytesseract
 import pandas as pd
-# import pandas as pd
+import numpy as np
+from requests import request
 from ultralytics import YOLO
 # from speed_estimation.tracker import *
 from .tracker import *
-from user_app.models import viewrecord
+from user_app.models import Record
 import time
 import math
 from datetime import datetime
-import easyocr
+#import easyocr
 
 print("EXISTING DATA")
+
 # Load the number plate detection model
-number_plate_model = YOLO(r'speed_estimation\best.pt')
+number_plate_model = YOLO('speed_estimation/best.pt')
 
 # Preprocess the number plate region for OCR
 def preprocess_image(image):
@@ -23,7 +24,7 @@ def preprocess_image(image):
     _, threshold_image = cv2.threshold(grayscale_image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     return threshold_image
 
-# # Perform OCR on the number plate region(py tesseract)
+# Perform OCR on the number plate region(py tesseract)
 # def perform_ocr(image):
 #     # Apply OCR using pytesseract
 #     text = pytesseract.image_to_string(image, config='--psm 7 --oem 3')
@@ -67,6 +68,7 @@ def check_speed(speed, bbox, frame):
     return frame
 
 def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset, line_x1, line_x2, counter1):
+    
     number_plate_text=''#numberplate textholder
     for bbox in bbox_id:
         x3, y3, x4, y4, id = bbox
@@ -126,14 +128,19 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     print("new data added")#update the records in database (database connection)
                     print("new data added++++++++++++++++")#update the records in database (database connection)
                     print(number_plate_text)
-                    new_data = viewrecord(
-                    liscenceplate_no= number_plate_text,
+
+                    
+
+                    #updating in database
+                    new_data = Record(
+                    stationID=logged_in_station_id,
+                    liscenseplate_no= number_plate_text,
                     speed= a_speed_kh,
                     date= datetime.now().date(),
-                    IDs= 5,
                     count=len(counter)
                     )
                     new_data.save()
+
         if center_y2 < (cy + offset) and center_y2 > (cy - offset):
             vehicle_up[id] = time.time()
         if id in vehicle_up:
@@ -149,12 +156,16 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     frame = check_speed(a_speed_kh1, bbox, frame)
                     print("new data added++++++++++++++++")#update the records in database (database connection)
                     print(number_plate_text)
-                    new_data = viewrecord(
-                    liscenceplate_no= number_plate_text,
-                    speed= a_speed_kh1,
+                       #get logged in station id:
+                    logged_in_station_id = request.user.station_id
+
+                    #updating in database
+                    new_data = Record(
+                    stationID=logged_in_station_id,
+                    liscenseplate_no= number_plate_text,
+                    speed= a_speed_kh,
                     date= datetime.now().date(),
-                    IDs= 5,
-                    count=len(counter1)
+                    count=len(counter)
                     )
                     new_data.save()
 
@@ -175,9 +186,9 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'speed_estimation\Cars_Moving.mp4'
+    video_path = r'speed_estimation/Cars_Moving.mp4'
     model_path = 'yolov8s.pt'
-    class_list_path = r'speed_estimation\coco.txt'
+    class_list_path = r'speed_estimation/coco.txt'
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_path)
 

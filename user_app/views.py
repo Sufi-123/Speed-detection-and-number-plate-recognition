@@ -2,103 +2,96 @@
 from speed_estimation.combined import process_video
 from django.shortcuts import render
 from django.http import HttpResponse, StreamingHttpResponse
-from .models import  viewrecord,traffic
+from .models import Record
+import csv
+from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+import re,uuid
+
+
+def welcome_page(request):
+    if request.method == 'POST':
+        mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
+        user = authenticate(request,mac_address=mac_address)
+        if user is not None:
+            login(request, user)
+            # Redirect to the appropriate page
+            return render(request,'base.html')
+                
+        else:
+            # Handle invalid login
+            return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
+                
+    return render(request, 'welcome_dashboard.html')
 
 # Create your views here.
 def home (request):
-    viewrecord_list= viewrecord.objects.all()
-    return render (request,'base.html',{'viewrecord_list':viewrecord_list})
+    Record_list= Record.objects.all()
+    return render (request,'base.html',{'Record_list':Record_list})
 
-# def viewrecords (request):
-#     return render (request,'viewrecords.html')
+#authorize mac address:
 
+def login_view(request):
+    if request.method == 'POST':
+        mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
+        user = authenticate(request,mac_address=mac_address)
+        if user is not None:
+            login(request, user)
+            # Redirect to the appropriate page
+            return render(request,'base.html')
+        else:
+            # Handle invalid login
+            return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
 
-from django.shortcuts import render
-from django.db import connection
+    return render(request, 'welcome_dashboard.html')
 
 
 def video(request):
     return StreamingHttpResponse(process_video(), content_type='multipart/x-mixed-replace; boundary=frame')
 
-def viewrecords(request):
-    viewrecord_list= viewrecord.objects.all()
-    return render ( request ,'viewrecords.html',
-                   {'viewrecord_list': viewrecord_list})
+def Records(request):
+    Record_list= Record.objects.all()
+    context = {
+        'Record_list': Record_list
+    }
+    return render(request, 'Records.html', context)
 
-def notice(request):
-    return render ( request ,'notice.html',)
+def download_csv(request):
+    # Retrieve data from the database or any other source
+    # records = Record.objects.all()  # Fetch records from the ViewRecord model
+    license = request.GET.get('license')
+    speed = request.GET.get('speed')
+    date = request.GET.get('date')
 
-def welcome_view(request):
-	return render(request,'welcome_dashboard.html')
+    # Retrieve filtered records based on the search criteria
+    filtered_records = Record.objects.all()  # Fetch all records by default
 
+    if license:
+        filtered_records = filtered_records.filter(licenseplate_no__icontains=license)
 
-
-
-
-def traffics(request):
-    traffic_list= traffic.objects.all()
-    if request.method == 'POST':
-        TrafficBooth = request.POST['trafficBooth']
-        Areacode = request.POST['areaCode']
-        location = request.POST['location']
-		
-
-        traffic_booth = traffic(TrafficBooth=TrafficBooth, Areacode=Areacode, location=location)
-        traffic_booth.save()
+    if speed:
+        filtered_records = filtered_records.filter(speed__icontains=speed)
 	
+    if date:
+        filtered_records = filtered_records.filter(date__icontains=date)
 
-        return redirect('traffics')  # Replace 'traffic_list' with the URL name of your traffic list view
+    # Create a response object with CSV content
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="view_records.csv"'
 
-    return render(request, 'TrafficList.html',
-		  {'traffic_list':traffic_list})  # Replace 'your_template.html' with the actual template file name
+    # Create a CSV writer and write the header row
+    writer = csv.writer(response)
+    writer.writerow(['SN', 'StationID', 'License Plate No', 'Speed', 'Date', 'ID', 'Count'])
 
+    # Write the data rows
+    for record in filtered_records:
+        writer.writerow([
+            record.pk,
+            record.stationID,
+            record.liscenseplate_no,
+            record.speed,
+            record.date,
+            record.count
+        ])
 
-# def trafficlist(request):
-# 	data = traffic(TrafficBooth=traffic,)
-#     data.save()
-
-
-from django.shortcuts import  render, redirect
-from .forms import NewUserForm
-from django.contrib.auth import login
-from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate
-
-def register_request(request):
-	if request.method == "POST":
-		form = NewUserForm(request.POST)
-		if form.is_valid():
-			user = form.save()
-			login(request, user)
-			messages.success(request, "Registration successful." )
-			return redirect("/")
-		messages.error(request, "Unsuccessful registration. Invalid information.")
-	form = NewUserForm()
-	return render (request=request, template_name="register.html", context={"register_form":form})
-
-
-def login_request(request):
-	if request.method == "POST":
-		form = AuthenticationForm(request, data=request.POST)
-		if form.is_valid():
-			username = form.cleaned_data.get('username')
-			password = form.cleaned_data.get('password')
-			user = authenticate(username=username, password=password)
-			if user is not None:
-				login(request, user)
-				messages.info(request, f"You are now logged in as {username}.")
-				return redirect("/")
-			else:
-				messages.error(request,"Invalid username or password.")
-		else:
-			messages.error(request,"Invalid username or password.")
-	form = AuthenticationForm()
-	return render(request=request, template_name="login.html", context={"login_form":form})
-# def viewrecords(request):
-
-#     # with connection.cursor() as cursor:
-#     #     cursor.execute("SELECT * FROM viewrecordss")
-#     #     rows = cursor.fetchall()
-#     # return render(request, 'viewrecords.html', {'rows': rows})
-
+    return response
