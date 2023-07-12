@@ -2,16 +2,10 @@
 
 <html>
     <head>
-        <link rel="stylesheet" href="../static/css/viewrecords.css">
+        <link rel="stylesheet" href="../static/css/Records.css">
 
 </head>
     <body>
-      {% if user.is_authenticated%}
-      <h3>Hi </h3>
-      <a href="{% url 'logout' %}">Logout</a> <br>
-      {% else %}
-      <a href="{% url 'login' %}">Login</a>
-      {% endif %}
 
       <div class="search-container">
         <input type="text" id="searchInput" placeholder="Search" oninput="searchTable() ; updateDownloadLink();">
@@ -28,25 +22,26 @@
         <table  id="myTable">
             <tr >
                 <th >SN</th>
-                <th>liscenceplate no</th>
+                <th>Station ID</th>
+                <th>Liscenseplate no</th>
                 <th>Speed</th>
                 <th>limit</th>
-                <!-- <th>limit crossed</th> -->
                 <th>Date</th>
-                <th >IDs</th>
+               
                 <th >count</th>
                
             </tr>
            
-            {% for viewrecord in viewrecord_list %}
+            {% for Record in Record_list %}
           <tr>
-            <td>{{viewrecord.pk}}</td>
-            <td>{{viewrecord.liscenceplate_no}}</td>
-            <td>{{viewrecord.speed}}</td>
+            <td>{{Record.pk}}</td>
+            <td>{{Record.stationiID}}</td>
+            <td>{{Record.liscenseplate_no}}</td>
+            <td>{{Record.speed}}</td>
             <td>50</td>
-            <td class="date-column">{{viewrecord.date|date:"d/m/Y"}}</td>  
-            <td>{{viewrecord.IDs}}</td>
-            <td>{{viewrecord.count}}</td>
+            <td class="date-column">{{Record.date|date:"d/m/Y"}}</td>  
+            
+            <td>{{Record.count}}</td>
           </tr>
           {% endfor %}
         </table>
@@ -54,7 +49,7 @@
       <p align="center" id="notFoundMessage" style="display: none;">Record Not Found</p>
 
       <p align="right">
-        <!-- <a href="{% url 'download_csv' %}" class="download-btn">Download CSV</a> -->
+       
         <a id="downloadCsvLink" href="#" class="download-btn">Download CSV</a>
     </p>
 
@@ -130,22 +125,5 @@
   cell.innerHTML = highlightedText;
 }
 
-function updateDownloadLink() {
-    const downloadLink = document.getElementById('downloadCsvLink');
-    const searchInput = document.getElementById('searchInput').value;
-    const searchOption = document.getElementById('searchOption').value;
-
-    let downloadUrl = "{% url 'download_csv' %}";
-
-    if (searchInput && searchOption === 'license') {
-      downloadUrl += "?license=" + searchInput;
-    } else if (searchInput && searchOption === 'speed') {
-      downloadUrl += "?speed=" + searchInput;
-    } else if (searchInput && searchOption === 'date') {
-      downloadUrl += "?date=" + searchInput;
-    }
-
-    downloadLink.href = downloadUrl;
-  }
 </script>
 

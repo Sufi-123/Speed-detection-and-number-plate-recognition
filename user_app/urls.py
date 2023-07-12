@@ -1,22 +1,9 @@
 from user_app import views
 from django.urls import path 
-from .views import download_csv
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
-   path('download-csv/', download_csv, name='download_csv'),
-   path("",views.home,name="home"),
+    path("",views.welcome_page, name="welcome"),
+   path("Home",views.home,name="home"),
    path('video/', views.video, name='video'),
-   path("viewrecords/",views.viewrecords,name="viewrecords"),
-   path("register/", views.register_request, name="register"),
-   path("login/", views.login_request, name="login"),
-   path("traffics/",views.traffics,name='traffics'),
-   path ("welcome/",views.welcome_view,name='welcome_Dashboard'),
-   path ("notice/",views.notice,name='notice'),
-   path ("dotm/",views.dotm,name="dotm_Dashboard"),
-   path ("home/",views.dotm_home,name="dotm_home"),
-   path('chart/', views.view_records, name='chart')
-   
-   
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+   path("Records/",views.Records,name="Records"),
+]

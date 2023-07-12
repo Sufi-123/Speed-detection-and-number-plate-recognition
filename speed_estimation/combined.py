@@ -2,10 +2,11 @@ import cv2
 import pytesseract
 import pandas as pd
 import numpy as np
+from requests import request
 from ultralytics import YOLO
 # from speed_estimation.tracker import *
 from .tracker import *
-from user_app.models import viewrecord
+from user_app.models import Record
 import time
 import math
 from datetime import datetime
@@ -24,19 +25,19 @@ def preprocess_image(image):
     return threshold_image
 
 # Perform OCR on the number plate region(py tesseract)
-def perform_ocr(image):
-    # Apply OCR using pytesseract
-    text = pytesseract.image_to_string(image, config='--psm 7 --oem 3')
-    return text
+# def perform_ocr(image):
+#     # Apply OCR using pytesseract
+#     text = pytesseract.image_to_string(image, config='--psm 7 --oem 3')
+#     return text
 
 # Perform OCR on the number plate region(easyocr)
-# def perform_ocr(image):
-#     # Perform OCR on the thresholded image
-#     recognized_plates=[]
-#     reader = easyocr.Reader(['en', 'ne'])
-#     result = reader.readtext(image, allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ', detail=0)
-#     recognized_plates = [''.join(result)]
-#     return recognized_plates
+def perform_ocr(image):
+    # Perform OCR on the thresholded image
+    recognized_plates=[]
+    reader = easyocr.Reader(['en', 'ne'])
+    result = reader.readtext(image, allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ', detail=0)
+    recognized_plates = [''.join(result)]
+    return recognized_plates
 
 #Calculating the axis position using the frame's shape and adjusting the percentage as needed
 def calculate_axis_positions(frame):
@@ -67,6 +68,7 @@ def check_speed(speed, bbox, frame):
     return frame
 
 def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset, line_x1, line_x2, counter1):
+    
     number_plate_text=''#numberplate textholder
     for bbox in bbox_id:
         x3, y3, x4, y4, id = bbox
@@ -126,14 +128,19 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     print("new data added")#update the records in database (database connection)
                     print("new data added++++++++++++++++")#update the records in database (database connection)
                     print(number_plate_text)
-                    new_data = viewrecord(
-                    liscenceplate_no= number_plate_text,
+
+                    
+
+                    #updating in database
+                    new_data = Record(
+                    stationID=logged_in_station_id,
+                    liscenseplate_no= number_plate_text,
                     speed= a_speed_kh,
                     date= datetime.now().date(),
-                    IDs= 5,
                     count=len(counter)
                     )
                     new_data.save()
+
         if center_y2 < (cy + offset) and center_y2 > (cy - offset):
             vehicle_up[id] = time.time()
         if id in vehicle_up:
@@ -149,12 +156,16 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     frame = check_speed(a_speed_kh1, bbox, frame)
                     print("new data added++++++++++++++++")#update the records in database (database connection)
                     print(number_plate_text)
-                    new_data = viewrecord(
-                    liscenceplate_no= number_plate_text,
-                    speed= a_speed_kh1,
+                       #get logged in station id:
+                    logged_in_station_id = request.user.station_id
+
+                    #updating in database
+                    new_data = Record(
+                    stationID=logged_in_station_id,
+                    liscenseplate_no= number_plate_text,
+                    speed= a_speed_kh,
                     date= datetime.now().date(),
-                    IDs= 5,
-                    count=len(counter1)
+                    count=len(counter)
                     )
                     new_data.save()
 

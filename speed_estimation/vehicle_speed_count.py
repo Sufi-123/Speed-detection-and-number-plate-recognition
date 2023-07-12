@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from ultralytics import YOLO
 from .tracker import *
-from user_app.models import viewrecord
+from user_app.models import Record
 import time
 import math
 from datetime import datetime
@@ -60,8 +60,8 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     cv2.putText(frame, str(len(counter)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh, bbox, frame)
                     print("new data added")#update the records in database (database connection)
-                    new_data = viewrecord(
-                    liscenceplate_no= 2,
+                    new_data = Record(
+                    liscenseplate_no= 2,
                     speed= a_speed_kh,
                     date= datetime.now().date(),
                     IDs= 4,
@@ -83,8 +83,8 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     cv2.putText(frame, str(len(counter1)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
                     frame = check_speed(a_speed_kh1, bbox, frame)
                     print("new data added")#update the records in database (database connection)
-                    new_data = viewrecord(
-                    liscenceplate_no= 2,
+                    new_data = Record(
+                    liscenseplate_no= 2,
                     speed= a_speed_kh1,
                     date= datetime.now().date(),
                     IDs= 4,

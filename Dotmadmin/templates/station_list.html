@@ -9,17 +9,19 @@
 
     <table>
       <tr>
-        <th>TrafficBooth</th>
+        <th>Station</th>
         <th>AreaCode</th>
         <th>Location</th>
+        <th>Mac-Address</th>
         
        
       </tr>
-      {% for traffic in traffic_list %}
+      {% for station in Station_list %}
       <tr>
-        <td>{{traffic.TrafficBooth}}</td>
-        <td>{{traffic.Areacode}}</td>
-        <td>{{traffic.location}}</td>
+        <td>{{station.IDs}}</td>
+        <td>{{station.areacode}}</td>
+        <td>{{station.location}}</td>
+        <td>{{station.mac_address}}</td>
         <td><button class="edit-button"><i class="fas fa-edit"></i> Edit</button></td>
        
         
@@ -35,20 +37,27 @@
     <div class="message-box">
       <button id="closeButton" class="close-button">&times;</button>
       <h2>Register Traffic Booth</h2>
-      <form action="{% url 'traffics' %}" method="POST">
+      <form action="{% url 'registration' %}" method="POST">
         {% csrf_token %}
-        <label for="trafficBooth">Traffic Booth:</label>
-        <input type="text" id="trafficBooth" name="trafficBooth" required>
-    
-        <label for="sn">Area Code</label>
-        <input type="text" id="sn" name="sn" required>
-    
-        <label for="areaCode">Location</label>
-        <input type="text" id="areaCode" name="areaCode" required>
-    
+        <label for="IDs">IDs:</label>
+        <input id="stationID" name="stationID" required>
+        {{ form.IDs }}
+      
+        <label for="areacode">Area Code</label>
+        <input  id="areacode" name="areacode" required>
+        {{form.areacode}}
+
+        <label for="location">Location:</label>
+        <input  id="location" name="location" required>
+        {{ form.location }}
+
+        <label for="mac_address">MAC Address:</label>
+        <input  name="mac_address" required>
+        {{ form.mac_address }}
+        <br>
+
         <button type="submit">Submit</button>
-        
-        
+
     </form>
     </div>
   </div>

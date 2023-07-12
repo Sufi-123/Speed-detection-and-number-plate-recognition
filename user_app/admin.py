@@ -1,7 +1,7 @@
 from django.contrib import admin
-from user_app.models import viewrecord,traffic
+from user_app.models import Record,Station
 
 # Register your models here.
-admin.site.register(viewrecord)
+admin.site.register(Record)
 
-admin.site.register(traffic)
+admin.site.register(Station)

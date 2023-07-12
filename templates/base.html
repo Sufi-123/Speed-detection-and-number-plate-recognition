@@ -20,7 +20,7 @@
     <div class="button-container">
       <button class="start-camera" onclick="startCamera()">Start Camera</button>
       <button class="stop-camera" onclick="stopCamera()">Stop Camera</button>
-      <a href="/viewrecords">
+      <a href="/Records">
       <button class="view-records">View Records</button>
       </a>
     </div>
@@ -38,18 +38,18 @@
         </tr>
         <tr >
           <td >23</td>
-          <td>liscenceplate_no</td>
+          <td>liscenseplate_no</td>
           <td>78/td>
           <td >0</td>
          
       </tr>
       <tr>
-        {% for viewrecord in viewrecord_list %}
+        {% for Record in Record_list %}
           <tr>
-              <td>{{viewrecord.pk}}</td>
-              <td>{{viewrecord.liscenceplate_no}}</td>
-              <td>{{viewrecord.speed}}</td>
-              <td>{{viewrecord.count}}</td>
+              <td>{{Record.pk}}</td>
+              <td>{{Record.liscenseplate_no}}</td>
+              <td>{{Record.speed}}</td>
+              <td>{{Record.count}}</td>
           </tr>
         {% endfor %} 
       </tr>

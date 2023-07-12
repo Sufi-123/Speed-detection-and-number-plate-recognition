@@ -57,15 +57,17 @@
     <!-- Replace "animation.gif" with the URL or path to your GIF file -->
     <img class="gif-image" src="../static\animation.gif" alt="Animated GIF">
     <div >
-        <button class="shadow__btn" onclick="redirectToLogin()">
+      <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="shadow__btn",>
             Get Started
         </button>
+      </form>
+        <div>{{ message }}</div>
+      
+
     </div>
   </div>
-  <script>
-    function redirectToLogin() {
-      window.location.href = "/login/";
-    }
-  </script>
 </body>
 </html>
