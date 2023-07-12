@@ -1,5 +1,4 @@
-{% extends 'dotm_Dashboard.html'%}
-
+{% extends 'dotm_Dashboard.html' %}
 
 {% block body_block %}
   <div class="container">
@@ -13,8 +12,6 @@
         <th>AreaCode</th>
         <th>Location</th>
         <th>Mac-Address</th>
-        
-       
       </tr>
       {% for station in Station_list %}
       <tr>
@@ -23,181 +20,125 @@
         <td>{{station.location}}</td>
         <td>{{station.mac_address}}</td>
         <td><button class="edit-button"><i class="fas fa-edit"></i> Edit</button></td>
-       
-        
       </tr>
       {% endfor %}
     </table>
-    
   </div>
-
 
   <!-- Overlay model for registration of Traffic Booth -->
   <div id="registration_overlay" class="registration_overlay">
     <div class="message-box">
       <button id="closeButton" class="close-button">&times;</button>
-      <h2>Register Traffic Booth</h2>
-      <form action="{% url 'registration' %}" method="POST">
+      <h2>Register Station Booth</h2>
+      <form id="registrationForm" action="{% url 'traffics' %}" method="POST">
         {% csrf_token %}
-        <label for="IDs">IDs:</label>
-        <input id="stationID" name="stationID" required>
-        {{ form.IDs }}
-      
-        <label for="areacode">Area Code</label>
-        <input  id="areacode" name="areacode" required>
-        {{form.areacode}}
+        <label for="stationID">IDs:</label>
+        <input type="text" id="stationID" name="stationID" required>
 
-        <label for="location">Location:</label>
-        <input  id="location" name="location" required>
-        {{ form.location }}
+        <label for="areaCode">Area Code</label>
+        <input type="text" id="areaCode" name="areaCode" required>
 
-        <label for="mac_address">MAC Address:</label>
-        <input  name="mac_address" required>
-        {{ form.mac_address }}
-        <br>
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" required>
 
-        <button type="submit">Submit</button>
+        <label for="mac_address">Mac Address</label>
+        <input type="text" id="mac_address" name="mac_address" required>
 
-    </form>
+        <button type="submit" id="submit-btn">Submit</button>
+      </form>
     </div>
   </div>
-  
-  
-  
 
   <script>
     const addButton = document.getElementById('addButton');
     const overlay = document.getElementById('registration_overlay');
     const closeButton = document.getElementById('closeButton');
-    const areaCodeInput = document.getElementById('areaCode');
     const editButtons = document.getElementsByClassName('edit-button');
-    
-
+    const registrationForm = document.getElementById('registrationForm');
+    const table = document.querySelector('table');
 
     addButton.addEventListener('click', () => {
       overlay.style.display = 'block';
-
-       // Clear the input fields
-       document.getElementById('trafficBooth').value = '';
-      document.getElementById('areaCode').value = '';
-      document.getElementById('location').value = '';
+      resetFormFields();
     });
 
     closeButton.addEventListener('click', () => {
       overlay.style.display = 'none';
     });
-     // Add submit event listener to the form
-  const registrationForm = document.querySelector('#registration_overlay form');
 
-  registrationForm.addEventListener('submit', (event) => {
-  const areaCodeValue = areaCodeInput.value.trim();
-  const trafficBoothValue = trafficBoothInput.value.trim();
-  
-  if (!/^[0-9]+$/.test(areaCodeValue, trafficBoothValue )) {
-    event.preventDefault(); // Prevent form submission
-    alert('Traffic booth or Area code must only contain numeric values.');
-  }
-});
+    let selectedRow = null;
 
-// ...
+    for (const editButton of editButtons) {
+      editButton.addEventListener('click', () => {
+        overlay.style.display = 'block';
+        resetFormFields();
 
-let selectedRow = null;
+        const row = editButton.parentNode.parentNode;
+        const cells = row.getElementsByTagName('td');
+        const stationID = cells[0].textContent;
+        const areaCode = cells[1].textContent;
+        const location = cells[2].textContent;
+        const mac_address = cells[3].textContent;
 
-// Add event listeners to edit buttons
-for (const editButton of editButtons) {
-  editButton.addEventListener('click', () => {
-    overlay.style.display = 'block';
+        document.getElementById('stationID').value = stationID;
+        document.getElementById('areaCode').value = areaCode;
+        document.getElementById('location').value = location;
+        document.getElementById('mac_address').value = mac_address;
 
-    // Get the table row associated with the clicked edit button
-    const row = editButton.parentNode.parentNode;
+        selectedRow = row;
+      });
+    }
 
-    // Get the data values from the table cells of the row
-    const trafficBooth = row.cells[0].textContent;
-    const areaCode = row.cells[1].textContent;
-    const location = row.cells[2].textContent;
+    registrationForm.addEventListener('submit', (event) => {
+      event.preventDefault();
 
-    // Populate the form with the existing data
-    document.getElementById('trafficBooth').value = trafficBooth;
-    document.getElementById('areaCode').value = areaCode;
-    document.getElementById('location').value = location;
+      const stationID = document.getElementById('stationID').value;
+      const areaCode = document.getElementById('areaCode').value;
+      const location = document.getElementById('location').value;
+      const mac_address = document.getElementById('mac_address').value;
 
-    
-
-    // Set the selected row to the current row
-    selectedRow = row;
-  });
-}
-
-// Handle the submission of the edited data
-registrationForm.addEventListener('submit', (event) => {
-  event.preventDefault(); // Prevent form submission
-
-  if (selectedRow) {
-    // Get the edited values from the form
-    const editedTrafficBooth = document.getElementById('trafficBooth').value;
-    const editedAreaCode = document.getElementById('areaCode').value;
-    const editedLocationInput = document.getElementById('location');
-    let editedLocation = editedLocationInput.value;
-    // Capitalize the first letter of the edited location
-    editedLocation = capitalizeFirstLetter(editedLocation);
-
-    // Update the selected row with the edited data
-    selectedRow.cells[0].textContent = editedTrafficBooth;
-    selectedRow.cells[1].textContent = editedAreaCode;
-    selectedRow.cells[2].textContent = editedLocation;
-
-
-   // Update the value in the form input field
-    editedLocationInput.value = editedLocation;
-
-    // Close the overlay after submission
-    overlay.style.display = 'none';
-
-    // Reset the selected row
-    selectedRow = null;
-  }else{
-    // Create a new row for the added data
-    const table = document.querySelector('table');
+      if (selectedRow) {
+        selectedRow.cells[0].textContent = stationID;
+        selectedRow.cells[1].textContent = areaCode;
+        selectedRow.cells[2].textContent = location;
+        selectedRow.cells[3].textContent = mac_address;
+      } else {
         const newRow = document.createElement('tr');
-        const trafficBoothCell = document.createElement('td');
+        const stationIDCell = document.createElement('td');
         const areaCodeCell = document.createElement('td');
         const locationCell = document.createElement('td');
+        const mac_addressCell = document.createElement('td');
         const editButtonCell = document.createElement('td');
         const editButton = document.createElement('button');
         const editIcon = document.createElement('i');
 
-        trafficBoothCell.textContent = document.getElementById('trafficBooth').value;
-        areaCodeCell.textContent = document.getElementById('areaCode').value;
-        let newLocation = document.getElementById('location').value;
-        newLocation = capitalizeFirstLetter(newLocation);
-        locationCell.textContent = newLocation;
-       
+        stationIDCell.textContent = stationID;
+        areaCodeCell.textContent = areaCode;
+        locationCell.textContent = location;
+        mac_addressCell.textContent = mac_address;
+
         editIcon.classList.add('fas', 'fa-edit');
         editButton.classList.add('edit-button');
         editButton.appendChild(editIcon);
         editButtonCell.appendChild(editButton);
-        newRow.appendChild(trafficBoothCell);
+        newRow.appendChild(stationIDCell);
         newRow.appendChild(areaCodeCell);
         newRow.appendChild(locationCell);
+        newRow.appendChild(mac_addressCell);
         newRow.appendChild(editButtonCell);
         table.appendChild(newRow);
-
-    // Close the overlay after submission
-    overlay.style.display = 'none';
       }
 
-      // Submit the form
-      registrationForm.submit();
+      overlay.style.display = 'none';
+      resetFormFields();
     });
 
-  function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-  
-// ...
-
-
-
+    function resetFormFields() {
+      document.getElementById('stationID').value = '';
+      document.getElementById('areaCode').value = '';
+      document.getElementById('location').value = '';
+      document.getElementById('mac_address').value = '';
+      selectedRow = null;
+    }
   </script>
-
 {% endblock %}

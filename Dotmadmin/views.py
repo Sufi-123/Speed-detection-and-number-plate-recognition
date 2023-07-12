@@ -4,12 +4,13 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from Dotmadmin.models import Station
 from user_app.visualize import generate_bar_graph, generate_line_graph,generate_permonth_graph,generate_perday_graph
 from collections import defaultdict
-
+from .forms import StationForm
 from django.db import connection
 
-from user_app.models import Record, Station
+from user_app.models import Record
 
 from .forms import StationForm
 
@@ -39,32 +40,57 @@ def admin_login(request):
 
 
 # view for regrtation of new station
-def register_station(request):
-    if request.method == 'POST':
-        print('success')
-        form = StationForm(request.POST)
-        print('success')
-        if form.is_valid():
-            print('success')
-            form.save()
-            return JsonResponse({'message': 'Station registered successfully!'})
-        else:
-            return JsonResponse({'error': 'Invalid form data.'})
-            # Redirect to success page or do something else
-            # message = {'message': 'Station registered successfully!'}
-            # return render(request,'station_list.html',message)
+# def register_station(request):
+#     if request.method == 'POST':
+#         print('success')
+#         form = StationForm(request.POST)
+#         print('success')
+#         if form.is_valid():
+#             print('success')
+#             form.save()
+#             return JsonResponse({'message': 'Station registered successfully!'})
+#         else:
+#             return JsonResponse({'error': 'Invalid form data.'})
+#             # Redirect to success page or do something else
+#             # message = {'message': 'Station registered successfully!'}
+#             # return render(request,'station_list.html',message)
 
-    else:
-        form = StationForm()
+#     else:
+#         form = StationForm()
     
-    context = {'form': form}
-    return render(request, 'station_list.html', context)
+#     context = {'form': form}
+#     return render(request, 'station_list.html', context)
 
 def traffics(request):
     Station_list= Station.objects.all()
-    
+    if request.method == 'POST':
+
+        stationID = request.POST['stationID']
+        Areacode = request.POST['areaCode']
+        location = request.POST['location']
+        mac_address = request.POST['mac_address']
+
+
+        station_booth = Station.objects.create(IDs=stationID, areacode=Areacode, location=location, mac_address=mac_address)
+        station_booth.save()
+
+
+        return redirect('traffics')  # Replace 'traffic_list' with the URL name of your traffic list view
+
     return render(request, 'station_list.html',
-		  {'Station_list':Station_list}) 
+          {'Station_list':Station_list})  # Replace 'your_template.html' with the actual template file name
+
+# def traffics(request):
+#     if request.method == 'POST':
+#         form = StationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             print('sufs')
+#             return redirect('traffics')  # Redirect to success page after form submission
+#     else:
+#         form = StationForm()
+
+#     return render(request, 'station_list.html', {'form': form})
             
 
  
