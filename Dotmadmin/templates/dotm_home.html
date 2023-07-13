@@ -1,6 +1,7 @@
 
 {% extends 'dotm_Dashboard.html' %}
 
+
 {% block body_block %}
 
 
@@ -9,31 +10,37 @@
 </div>
 <div class="bottom-section">
   <div class="left">
-    <h3>Traffic List</h3>
+    <h3>Station List</h3>
+    
     <table>
+     
       <tr>
-        <th>TrafficBooth</th>
+        <th>Station ID</th>
         <th>AreaCode</th>
         <th>Location</th>
+        <th>Mac-Address</th>
         
        
       </tr>
-      {% for traffic in traffic_list %}
+      {% for station in stations|slice:":4" %}
       <tr>
-        <td>{{traffic.TrafficBooth}}</td>
-        <td>{{traffic.Areacode}}</td>
-        <td>{{traffic.location}}</td>
-        <td><button class="edit-button"><i class="fas fa-edit"></i> Edit</button></td>
-       
-        
+        <td>{{ station.IDs }}</td>
+        <td>{{ station.areacode }}</td>
+        <td>{{ station.location }}</td>
+        <td>{{station.mac_address}}</td>
       </tr>
       {% endfor %}
     </table>
+    <a href="{% url 'traffics' %}" class="show-more-button">Show More</a>
   </div>
   <div class="right">
     <!-- Right section content goes here -->
+      <h3>Preview</h3>
+     
     
-      <h3>Notice</h3>
+     
+      
+      <!-- <h3>Notice</h3>
       <table id="fileTable">
         <thead>
           <tr>
@@ -45,7 +52,7 @@
         <tbody>
         </tbody>
   
-      </table>
+      </table> -->
   </div>
 </div>
 

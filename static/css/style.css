@@ -253,6 +253,7 @@ th, td {
   background-color:#b4daef;
   padding: 0;
   margin: 10px;
+  overflow: auto;
 }
 
 

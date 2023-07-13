@@ -8,7 +8,7 @@ class Station(models.Model):
     location = models.CharField(max_length=80)
     areacode = models.PositiveIntegerField()
     mac_address = models.CharField(max_length=17)
-
+    
 class Record(models.Model):
     stationID= models.ForeignKey('Station', on_delete=models.CASCADE)
     speed= models.IntegerField()

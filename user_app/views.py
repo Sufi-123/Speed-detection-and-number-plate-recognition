@@ -8,42 +8,56 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 import re,uuid
 
-
+#view for welcome page and mac-address authorization
 def welcome_page(request):
-    if request.method == 'POST':
-        mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
-        user = authenticate(request,mac_address=mac_address)
-        if user is not None:
-            login(request, user)
-            # Redirect to the appropriate page
-            return render(request,'base.html')
-                
-        else:
-            # Handle invalid login
-            return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
-                
+    #checking if the user is already authorized:
+    try:
+        if request.user.is_authenticated:
+            return render(request, 'base.html')
+        if request.method == 'POST':
+            mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
+            user = authenticate(request,mac_address=mac_address)
+            if user is not None:
+                login(request, user)
+                # Redirect to the appropriate page
+                return render(request,'base.html')
+                    
+            else:
+                # Handle invalid login
+                return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
+            
+    #throw exception for user authentication        
+    except Exception as e:
+        print(e)
+
     return render(request, 'welcome_dashboard.html')
 
 # Create your views here.
 def home (request):
-    Record_list= Record.objects.all()
-    return render (request,'base.html',{'Record_list':Record_list})
+    try:
+        if request.user.is_authenticated:
+            Record_list= Record.objects.all()
+        return render (request,'base.html',{'Record_list':Record_list})
 
+    except Exception as e:
+        print(e)     
+    
 #authorize mac address:
 
 def login_view(request):
-    if request.method == 'POST':
-        mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
-        user = authenticate(request,mac_address=mac_address)
-        if user is not None:
-            login(request, user)
-            # Redirect to the appropriate page
-            return render(request,'base.html')
-        else:
-            # Handle invalid login
-            return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
 
-    return render(request, 'welcome_dashboard.html')
+        if request.method == 'POST':
+            mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
+            user = authenticate(request,mac_address=mac_address)
+            if user is not None:
+                login(request, user)
+                # Redirect to the appropriate page
+                return render(request,'base.html')
+            else:
+                # Handle invalid login
+                return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
+
+        return render(request, 'welcome_dashboard.html')
 
 
 def video(request):

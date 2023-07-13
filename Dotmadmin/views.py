@@ -17,7 +17,7 @@ from .forms import StationForm
 def admin_login(request):
     try:
         if request.user.is_authenticated:
-            return render(request, 'dotm_home.html')
+            return redirect( 'Home')
 
         if request.method == 'POST':
             username = request.POST.get('username')
@@ -60,6 +60,16 @@ def register_station(request):
     context = {'form': form}
     return render(request, 'station_list.html', context)
 
+#views for dotm homepage
+def dotm_home(request):
+        #passing 4 records from station
+        station=Station.objects.all()[:4]
+        context={
+            'stations': station
+        }
+        return render(request,'dotm_home.html', context)
+
+
 def traffics(request):
     Station_list= Station.objects.all()
     if request.method == 'POST':
@@ -78,10 +88,6 @@ def traffics(request):
     return render(request, 'station_list.html',
           {'Station_list':Station_list})  # Replace 'your_template.html' with the actual template file name
             
-
- 
-
-
 
 def chart_display(request):
     limit = 50  # Speed limit value
@@ -131,13 +137,6 @@ def chart_display(request):
 def notice(request):
     return render ( request ,'notice.html',)
 
-def welcome_view(request):
-	return render(request,'welcome_dashboard.html')
 
-def dotm(request):
-	return render(request,'dotm_dashboard.html')
-
-def dotm_home(request):
-	return render(request,'dotm_home.html')
 
 
