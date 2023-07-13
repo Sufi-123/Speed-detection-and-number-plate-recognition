@@ -44,20 +44,20 @@ def home (request):
     
 #authorize mac address:
 
-def login_view(request):
+# def login_view(request):
 
-        if request.method == 'POST':
-            mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
-            user = authenticate(request,mac_address=mac_address)
-            if user is not None:
-                login(request, user)
-                # Redirect to the appropriate page
-                return render(request,'base.html')
-            else:
-                # Handle invalid login
-                return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
+#         if request.method == 'POST':
+#             mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
+#             user = authenticate(request,mac_address=mac_address)
+#             if user is not None:
+#                 login(request, user)
+#                 # Redirect to the appropriate page
+#                 return render(request,'base.html')
+#             else:
+#                 # Handle invalid login
+#                 return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
 
-        return render(request, 'welcome_dashboard.html')
+#         return render(request, 'welcome_dashboard.html')
 
 
 def video(request):
