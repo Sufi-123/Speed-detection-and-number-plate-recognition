@@ -24,7 +24,8 @@ def welcome_page(request):
                     
             else:
                 # Handle invalid login
-                return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
+                print("invalid mac-address")
+                return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address. Consult DOTM '})
             
     #throw exception for user authentication        
     except Exception as e:

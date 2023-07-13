@@ -37,28 +37,6 @@ def admin_login(request):
         print(e)
 
 
-# view for regrtation of new station
-# def register_station(request):
-#     if request.method == 'POST':
-#         print('success')
-#         form = StationForm(request.POST)
-#         print('success')
-#         if form.is_valid():
-#             print('success')
-#             form.save()
-#             return JsonResponse({'message': 'Station registered successfully!'})
-#         else:
-#             return JsonResponse({'error': 'Invalid form data.'})
-#             # Redirect to success page or do something else
-#             # message = {'message': 'Station registered successfully!'}
-#             # return render(request,'station_list.html',message)
-
-#     else:
-#         form = StationForm()
-    
-#     context = {'form': form}
-#     return render(request, 'station_list.html', context)
-
 #views for dotm homepage
 def dotm_home(request):
         #passing 4 records from station
@@ -88,17 +66,6 @@ def traffics(request):
     return render(request, 'station_list.html',
           {'Station_list':Station_list})  # Replace 'your_template.html' with the actual template file name
 
-# def traffics(request):
-#     if request.method == 'POST':
-#         form = StationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             print('sufs')
-#             return redirect('traffics')  # Redirect to success page after form submission
-#     else:
-#         form = StationForm()
-
-#     return render(request, 'station_list.html', {'form': form})
             
 
 def chart_display(request):
