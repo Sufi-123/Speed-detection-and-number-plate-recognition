@@ -1,52 +1,169 @@
 import cv2
-import pytesseract
 import pandas as pd
 import numpy as np
-from ultralytics import YOLO
-# from speed_estimation.tracker import *
 from .tracker import *
 from user_app.models import viewrecord
 import time
 import math
 from datetime import datetime
-#import easyocr
+from matplotlib import pyplot as plt
+import ultralytics
+from ultralytics import YOLO
+import functools
+from keras.models import load_model
+# from keras.preprocessing import image
+# import msvcrt
 
 print("EXISTING DATA")
+ # Load the number plate detection model
+best_path= r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/best.pt'
+number_plate_model = YOLO(best_path)
 
-# Load the number plate detection model
-number_plate_model = YOLO('speed_estimation/best.pt')
+# Load the character recognition model
+model= load_model(r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/model.h5')
 
 # Preprocess the number plate region for OCR
-def preprocess_image(image):
-    grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def preprocess_image(image,scale_factor=3):
+    scaled_image = cv2.resize(image, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_LINEAR)
+     # Convert to grayscale
+    grayscale_image = cv2.cvtColor(scaled_image, cv2.COLOR_BGR2GRAY)
+    #gaussian blur
+    blur= cv2.GaussianBlur(grayscale_image,(5,5),0)
+    
+    return blur
+
+def threshold(image):
     # Apply Otsu thresholding
-    _, threshold_image = cv2.threshold(grayscale_image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    return threshold_image
+    _, threshold_image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+    
+    # Invert the colors
+    inverted_image = cv2.bitwise_not(threshold_image)
+    return inverted_image  
 
-# Perform OCR on the number plate region(py tesseract)
-def perform_ocr(image):
-    # Apply OCR using pytesseract
-    text = pytesseract.image_to_string(image, config='--psm 7 --oem 3')
-    return text
+def segment_characters(image):
+    # Perform connected components analysis on the thresholded image and
+    # initialize the mask to hold only the components we are interested in
+    _, labels = cv2.connectedComponents(image)
+    mask = np.zeros(image.shape, dtype="uint8")
+    
+    # Set lower bound and upper bound criteria for characters
+    total_pixels = image.shape[0] * image.shape[1]
+    lower = total_pixels // 100 # heuristic param, can be fine tuned if necessary
+    upper = total_pixels // 10 # heuristic param, can be fine tuned if necessary
 
-# Perform OCR on the number plate region(easyocr)
-# def perform_ocr(image):
-#     # Perform OCR on the thresholded image
-#     recognized_plates=[]
-#     reader = easyocr.Reader(['en', 'ne'])
-#     result = reader.readtext(image, allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ', detail=0)
-#     recognized_plates = [''.join(result)]
-#     return recognized_plates
+    # Loop over the unique components
+    for (i, label) in enumerate(np.unique(labels)):
+        # If this is the background label, ignore it
+        if label == 255:
+            continue
+
+        # Otherwise, construct the label mask to display only connected component
+        # for the current label
+        labelMask = np.zeros(image.shape, dtype="uint8")
+        labelMask[labels == label] = 255
+        numPixels = cv2.countNonZero(labelMask)
+
+        # If the number of pixels in the component is between lower bound and upper bound, 
+        # add it to our mask
+        if numPixels > lower and numPixels < upper:
+            mask = cv2.add(mask, labelMask)
+    return mask
+
+
+def predict_character(image, model):
+    # Resize and preprocess the image
+    image = cv2.resize(image, (50, 50))
+    image = image.reshape(-1, image.shape[0], 50, 1)
+
+    # Predict using the CNN model
+    classes = model.predict(image)
+    classes = np.argmax(classes)  # Get the index of the maximum prediction
+
+    return classes
+
+def license_plate(frame,y3,y4,x3,x4,id):
+    vehicle_image = frame[int(y3):int(y4), int(x3):int(x4)]
+        # Perform object detection using YOLO
+    detections = number_plate_model(vehicle_image)
+
+    # Extract bounding boxes and crop number plate regions
+    number_plate_boxes = []
+    for detection in detections[0].boxes.data:
+        if detection[5] == 0:  
+            number_plate_boxes.append(detection[:4])
+    
+    if len(number_plate_boxes) > 0:
+        for box in number_plate_boxes:
+            x1, y1, x2, y2 = box
+            cv2.rectangle(vehicle_image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+            # Crop and preprocess the number plate region
+            cropped_image = vehicle_image[int(y1):int(y2), int(x1):int(x2)]
+            preprocessed_image = preprocess_image(cropped_image)
+            thresholded_image = threshold(preprocessed_image)
+            mask = segment_characters(thresholded_image)
+            # Find contours and get bounding box for each contour
+            cnts, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            boundingBoxes = [cv2.boundingRect(c) for c in cnts]
+
+            # Find contours and get bounding box for each contour
+            cnts, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            boundingBoxes = [cv2.boundingRect(c) for c in cnts]
+                
+                # Sort the bounding boxes from left to right, top to bottom
+                # sort by Y first, and then sort by X if Ys are similar
+            def compare(rect1, rect2):
+                if abs(rect1[1] - rect2[1]) > 10:
+                    return rect1[1] - rect2[1]
+                else:
+                    return rect1[0] - rect2[0]
+            boundingBoxes = sorted(boundingBoxes, key=functools.cmp_to_key(compare) )
+            # Draw bounding boxes on the mask image
+            mask_with_boxes = cv2.cvtColor(mask.copy(), cv2.COLOR_GRAY2BGR)  # Convert mask to BGR color space
+            segmented_characters = []
+            for (x, y, w, h) in boundingBoxes:
+                # Extract the segmented character region from the mask
+                segmented_character = mask[y:y+h, x:x+w]
+                # Add the segmented character to the list
+                segmented_characters.append(segmented_character)
+                # Draw the bounding box on the mask image
+                cv2.rectangle(mask_with_boxes, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            # Iterate over segmented characters and recognize them
+            plate = ''
+            for character in segmented_characters:
+                cnn_prediction = predict_character(character, model)
+
+                if cnn_prediction < 10:
+                    plate += str(cnn_prediction)
+                elif cnn_prediction == 10:
+                    plate += 'BA '
+                elif cnn_prediction == 11:
+                    plate += 'CHA '
+                elif cnn_prediction == 12:
+                    plate += 'PA '
+                else:
+                    plate += 'Unknown'
+            
+            prev_id = None
+            best_plate = None
+#           # Check if the plate is different from the previous plate
+            if  id != prev_id:
+                best_plate = plate
+                prev_id = id
+
+
+            # Print the recognized number plate
+            print('vehicle ID:', id,'Plate:', best_plate)   
 
 #Calculating the axis position using the frame's shape and adjusting the percentage as needed
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.2)  
-    center_y2 = int(frame_height * 0.4)  
+    center_y1 = int(frame_height * 0.35)  
+    center_y2 = int(frame_height * 0.65)  
     offset = int(frame_height * 0.02)  
-    line_x1 = int(frame_width * 0.1)
-    line_x2 = int(frame_width * 0.9)
+    line_x1 = int(frame_width * 0)
+    line_x2 = int(frame_width * 1)
     return center_y1, center_y2, offset,line_x1,line_x2
 
 #Checking whether the speed is above the speed limit or not
@@ -66,80 +183,67 @@ def check_speed(speed, bbox, frame):
 
     return frame
 
-def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset, line_x1, line_x2, counter1):
+
+def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset, line_x1, line_x2, counter1,fps):
+    
     for bbox in bbox_id:
         x3, y3, x4, y4, id = bbox
+        distance_known = 10 #Assumed distance between the camera and vehicle
+        height_known = 2 #Assumed height of the vehicle
+
         cx = int(x3 + x4) // 2
         cy = int(y3 + y4) // 2
 
-        # Perform number plate detection on the vehicle bounding box
-
-        vehicle_image = frame[int(y3):int(y4), int(x3):int(x4)]
-        # Perform object detection using YOLO
-        detections = number_plate_model(vehicle_image)
-
-        # Extract bounding boxes and crop number plate regions
-        number_plate_boxes = []
-        for detection in detections[0].boxes.data:
-            if detection[5] == 0:
-                number_plate_boxes.append(detection[:4])
-
-        if len(number_plate_boxes) > 0:
-            for box in number_plate_boxes:
-                x1, y1, x2, y2 = box
-                cv2.rectangle(vehicle_image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-                # Crop and preprocess the number plate region
-                cropped_image = vehicle_image[int(y1):int(y2), int(x1):int(x2)]
-                #scaling image
-                # scaled_image = cv2.resize(cropped_image, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_LINEAR)
-
-                # Preprocess the number plate region for OCR
-                preprocessed_image = preprocess_image(cropped_image)
-            
-                # Perform OCR on the preprocessed number plate image
-                number_plate_text = perform_ocr(preprocessed_image)
-                print("Vehicle ID:", id, "Number Plate:", number_plate_text)
-
-        #cv2.rectangle(frame, (int(x3), int(y3)), (int(x4), int(y4)), (255, 0, 255), 6, 1)
-
         if center_y1 < (cy + offset) and center_y1 > (cy - offset):
             vehicle_down[id] = time.time()
+           
         if id in vehicle_down:
+            
             if center_y2 < (cy + offset) and center_y2 > (cy - offset):
-                elapsed_time = time.time() - vehicle_down[id]
+                elapsed_time = 1 / fps
                 if counter.count(id) == 0:
                     counter.append(id)
                     # Calculate distance dynamically based on coordinates
-                    distance = abs(y4 - y3)  # Use the height of the bounding box as the distance
+                    distance = distance_known * height_known / (y4 - y3)  # Use the height of the bounding box as the distance
                     a_speed_ms = distance / elapsed_time
                     a_speed_kh = a_speed_ms * 3.6
-                    cv2.putText(frame, str(len(counter)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
+                    cv2.putText(frame, str(len(counter)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2) 
                     frame = check_speed(a_speed_kh, bbox, frame)
+                    license_plate(frame,y3,y4,x3,x4,id)
+                    
                     print("new data added")#update the records in database (database connection)
+                    print("new data added++++++++++++++++")#update the records in database (database connection)
+                   
                     new_data = viewrecord(
-                    liscenceplate_no= 2,
+                    # liscenceplate_no= number_plate_text,
                     speed= a_speed_kh,
                     date= datetime.now().date(),
                     IDs= 5,
                     count=len(counter)
                     )
                     new_data.save()
+
+
         if center_y2 < (cy + offset) and center_y2 > (cy - offset):
             vehicle_up[id] = time.time()
         if id in vehicle_up:
             if center_y1 < (cy + offset) and center_y1 > (cy - offset):
-                elapsed1_time = time.time() - vehicle_up[id]
+                elapsed1_time = 1 / fps
                 if counter1.count(id) == 0:
                     counter1.append(id)
                     # Calculate distance dynamically based on coordinates
-                    distance1 = abs(y4 - y3)  # Use the height of the bounding box as the distance
+                    distance1 = distance_known * height_known / (y4 - y3)  # Use the height of the bounding box as the distance
                     a_speed_ms1 = distance1 / elapsed1_time
                     a_speed_kh1 = a_speed_ms1 * 3.6
                     cv2.putText(frame, str(len(counter1)), (int(x3), int(y3)), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 0), 2)
+                   
                     frame = check_speed(a_speed_kh1, bbox, frame)
-                    print("new data added")#update the records in database (database connection)
+                    license_plate(frame,y3,y4,x3,x4,id)
+
+                    print("new data added++++++++++++++++")#update the records in database (database connection)
+                    # print(number_plate_text)
                     new_data = viewrecord(
-                    liscenceplate_no= 2,
+                    # liscenceplate_no= number_plate_text,
                     speed= a_speed_kh1,
                     date= datetime.now().date(),
                     IDs= 5,
@@ -164,9 +268,10 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'speed_estimation/Cars_Moving.mp4'
-    model_path = 'yolov8s.pt'
-    class_list_path = r'speed_estimation/coco.txt'
+    video_path = r'/home/rubi/Desktop/rubi.mp4'
+    model_path = '/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/yolov8s.pt'
+    class_list_path = r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/coco.txt'
+   
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_path)
 
@@ -180,6 +285,7 @@ def process_video():
     vehicle_up = {}
     paused = False
     count = 0
+    fps = 25
     while True:
         if not paused:
             ret, frame = cap.read(0)
@@ -188,7 +294,7 @@ def process_video():
             frame = cv2.resize(frame, (1020, 500))
 
             results = model.predict(frame)
-            boxes = results[0].boxes.boxes
+            boxes = results[0].boxes.data
             df = pd.DataFrame(boxes).astype("float")
             object_list = []
             for index, row in df.iterrows():
@@ -201,25 +307,20 @@ def process_video():
 
             bbox_id = tracker.update(object_list)
 
-            frame = speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset,line_x1,line_x2, counter1)
+            frame = speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_y1, center_y2, offset,line_x1,line_x2, counter1,fps)
 
             vehicle_down_count, vehicle_up_count = count_vehicles(counter, counter1)
             
-            print("NEW DATA: ")
+            # print("NEW DATA: ")
             cv2.putText(frame, ('Count-') + str(vehicle_down_count + vehicle_up_count), (60, 90),
                     cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 255, 255), 2)
 
             # cv2.imshow("Processed Video", frame)
             yield b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n'
-        
-        key = cv2.waitKey(1)
-        if key == 27: #press Esc to exit
-            break
-        elif key == ord('p') or key == ord('P'):#press P to pause
-            paused = not paused
-    
-   
+
     
     cap.release()
     cv2.destroyAllWindows()
+
+
 
