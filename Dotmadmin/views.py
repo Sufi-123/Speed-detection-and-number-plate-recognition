@@ -1,18 +1,16 @@
 # Create your views here.
 from django.http import HttpResponseRedirect, JsonResponse
+from user_app.models import Record, Station
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from Dotmadmin.models import Station
-from user_app.visualize import generate_bar_graph, generate_line_graph,generate_permonth_graph,generate_perday_graph
+from user_app.visualize import *
 from collections import defaultdict
-from .forms import StationForm
+
 from django.db import connection
 
-from user_app.models import Record
 
-from .forms import StationForm
+
 
 #views for admin login authentication
 def admin_login(request):
