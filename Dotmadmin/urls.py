@@ -4,7 +4,6 @@ from django.urls import path , include
 from .views import *
 urlpatterns = [
     path('', admin_login, name='dotm_login'),
-    path("register/", register_station, name="registration"),
     path("traffics/",traffics,name='traffics'),
     path("chart/",chart_display,name='chart'),
     path ("notice/",notice,name='notice'),

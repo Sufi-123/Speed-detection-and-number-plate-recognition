@@ -1,12 +1,13 @@
 from django import forms
-from user_app.models import Station
+from Dotmadmin.models import Station
 import re
+
 
 class StationForm(forms.ModelForm):
     class Meta:
         model = Station
-        fields = ('IDs', 'location', 'areacode', 'mac_address')
-    
+        fields = ['IDs', 'areacode', 'location', 'mac_address']
+
     def clean_location(self):
         location = self.cleaned_data['location']
         # Add your validation logic for the location field
