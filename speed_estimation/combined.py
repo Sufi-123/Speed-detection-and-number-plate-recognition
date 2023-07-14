@@ -1,5 +1,6 @@
+import re
+import uuid
 import cv2
-from httpcore import request
 import pandas as pd
 import numpy as np
 from django.contrib.auth.decorators import login_required
@@ -16,8 +17,10 @@ import functools
 from keras.models import load_model
 # from keras.preprocessing import image
 # import msvcrt
-station = Station.objects.get(mac_address='f4:8e:38:f3:0a:a0')
-print(station.IDs)
+
+#retrieving the mac_address
+mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
+
 
 print("EXISTING DATA")
 
@@ -221,13 +224,14 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     
                     print("new data added")#update the records in database (database connection)
                     print("new data added++++++++++++++++")#update the records in database (database connection)
-                 
+                    
                     new_data = Record(
-                    stationID= station,
+                   
+                    stationID = Station.objects.get(mac_address=mac_address),  # Rerieve Station user using mac_address
                     speed= a_speed_kh,
                     date= datetime.now().date(),
                     count=len(counter),
-                    liscenseplate_no= best_plate,
+                    liscenseplate_no= "",
                     )
                     new_data.save()
          
@@ -251,11 +255,11 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     # print(number_plate_text)
                     
                     new_data = Record(
-                    stationID= station,
+                    stationID = Station.objects.get(mac_address=mac_address),  
                     speed= a_speed_kh1,
                     date= datetime.now().date(),
                     count=len(counter1),
-                    liscenseplate_no= best_plate,
+                    liscenseplate_no= "",
                     )
                     new_data.save()
 
@@ -296,6 +300,7 @@ def process_video():
     fps = 25
     while True:
         if not paused:
+            
             ret, frame = cap.read(0)
             if not ret:
                 break

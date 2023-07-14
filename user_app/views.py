@@ -42,23 +42,6 @@ def home (request):
 
     except Exception as e:
         print(e)     
-    
-#authorize mac address:
-
-# def login_view(request):
-
-#         if request.method == 'POST':
-#             mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
-#             user = authenticate(request,mac_address=mac_address)
-#             if user is not None:
-#                 login(request, user)
-#                 # Redirect to the appropriate page
-#                 return render(request,'base.html')
-#             else:
-#                 # Handle invalid login
-#                 return render(request, 'welcome_dashboard.html', {'error': 'Invalid MAC address'})
-
-#         return render(request, 'welcome_dashboard.html')
 
 
 def video(request):
@@ -70,6 +53,7 @@ def Records(request):
         'Record_list': Record_list
     }
     return render(request, 'Records.html', context)
+  
 
 def download_csv(request):
     # Retrieve data from the database or any other source
