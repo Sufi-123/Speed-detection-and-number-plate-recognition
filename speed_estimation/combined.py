@@ -159,8 +159,9 @@ def license_plate(frame,y3,y4,x3,x4,id):
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.35)  
-    center_y2 = int(frame_height * 0.65)  
+    center_y1 = int(frame_height * 0.2) 
+    # 0.35..0.65
+    center_y2 = int(frame_height * 0.4)  
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0)
     line_x2 = int(frame_width * 1)
@@ -268,7 +269,7 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'/home/rubi/Desktop/rubi.mp4'
+    video_path = r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/speed_estimation/test_vid/Cars_Moving.mp4'
     model_path = '/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/yolov8s.pt'
     class_list_path = r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/coco.txt'
    
