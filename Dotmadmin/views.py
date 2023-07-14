@@ -1,11 +1,12 @@
 # Create your views here.
-from django.http import HttpResponseRedirect, JsonResponse
+
 from user_app.models import Record, Station
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from user_app.visualize import *
 from collections import defaultdict
+
 
 from django.db import connection
 
@@ -36,28 +37,6 @@ def admin_login(request):
     except Exception as e:
         print(e)
 
-
-# view for regrtation of new station
-# def register_station(request):
-#     if request.method == 'POST':
-#         print('success')
-#         form = StationForm(request.POST)
-#         print('success')
-#         if form.is_valid():
-#             print('success')
-#             form.save()
-#             return JsonResponse({'message': 'Station registered successfully!'})
-#         else:
-#             return JsonResponse({'error': 'Invalid form data.'})
-#             # Redirect to success page or do something else
-#             # message = {'message': 'Station registered successfully!'}
-#             # return render(request,'station_list.html',message)
-
-#     else:
-#         form = StationForm()
-    
-#     context = {'form': form}
-#     return render(request, 'station_list.html', context)
 
 #views for dotm homepage
 def dotm_home(request):
@@ -136,12 +115,13 @@ def chart_display(request):
     permonth_path= generate_permonth_graph(labels, counts)
     perday_path= generate_perday_graph(label1, count1)
 
+    # chart_path,graph_path,permonth_path,perday_path=visualize_charts()
     context={
         'chart_path': chart_path,
         'graph_path': graph_path,
         'permonth_path' : permonth_path,
         'perday_path' : perday_path
-          
+ 
 
     }
     return render(request, 'chart.html',context)
