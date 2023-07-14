@@ -67,17 +67,6 @@ def traffics(request):
     return render(request, 'station_list.html',
           {'Station_list':Station_list})  # Replace 'your_template.html' with the actual template file name
 
-# def traffics(request):
-#     if request.method == 'POST':
-#         form = StationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             print('sufs')
-#             return redirect('traffics')  # Redirect to success page after form submission
-#     else:
-#         form = StationForm()
-
-#     return render(request, 'station_list.html', {'form': form})
             
 
 def chart_display(request):
