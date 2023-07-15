@@ -13,7 +13,7 @@ import easyocr
 import msvcrt
 print("EXISTING DATA")
  # Load the number plate detection model
-best_path= r'C:\Users\Administrator\Desktop\Speed-detection-and-number-plate-recognition\speed_estimation\best.pt'
+best_path= r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/best.pt'
 number_plate_model = YOLO(best_path)
 
 #dictionary to store the best license late for each ID
@@ -241,9 +241,9 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'C:\Users\Administrator\Desktop\sufipuja.mp4'
+    video_path = r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/speed_estimation/test_vid/Cars_Moving.mp4'
     model_path = 'yolov8s.pt'
-    class_list_path = r'C:\Users\Administrator\Desktop\Speed-detection-and-number-plate-recognition\speed_estimation\coco.txt'
+    class_list_path = r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models'
    
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_path)
