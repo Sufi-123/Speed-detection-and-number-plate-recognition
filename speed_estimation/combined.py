@@ -25,11 +25,11 @@ mac_address = (':'.join(re.findall('..', '%012x' % uuid.getnode())))
 print("EXISTING DATA")
 
  # Load the number plate detection model
-best_path= r'models\best.pt'
+best_path= r'/home/rubi/Desktop/8th_sem/final project/start/Speed-detection-and-number-plate-recognition/models/best.pt'
 number_plate_model = YOLO(best_path)
 
 # Load the character recognition model
-model= load_model(r'models\model.h5')
+model= load_model(r'/home/rubi/Desktop/8th_sem/final project/start/Speed-detection-and-number-plate-recognition/models/model.h5')
 
 # Preprocess the number plate region for OCR
 def preprocess_image(image,scale_factor=3):
