@@ -5,9 +5,9 @@ from django.db import models
 
 
 class Station(models.Model):
-    IDs= models.AutoField(primary_key=True)
-    location = models.CharField(max_length=80)
+    
     areacode = models.PositiveIntegerField()
+    location = models.CharField(max_length=80)
     mac_address = models.CharField(max_length=17)
     
 class Record(models.Model):

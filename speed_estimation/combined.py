@@ -169,9 +169,9 @@ def license_plate(frame,y3,y4,x3,x4,id):
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.2) 
-    # 0.35..0.65
-    center_y2 = int(frame_height * 0.4)  
+    center_y1 = int(frame_height * 0.35) 
+    # 0.2..0.4   47  35  62
+    center_y2 = int(frame_height * 0.62)  
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0)
     line_x2 = int(frame_width * 1)
@@ -211,7 +211,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
         if id in vehicle_down:
             
             if center_y2 < (cy + offset) and center_y2 > (cy - offset):
-                elapsed_time = 1 / fps
+                elapsed_time =1/fps
                 if counter.count(id) == 0:
                     counter.append(id)
                     # Calculate distance dynamically based on coordinates
@@ -231,7 +231,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     speed= a_speed_kh,
                     date= datetime.now().date(),
                     count=len(counter),
-                    liscenseplate_no= "",
+                    liscenseplate_no= best_plate,
                     )
                     new_data.save()
          
@@ -259,7 +259,7 @@ def speed_calculation(frame, bbox_id, counter, vehicle_down, vehicle_up, center_
                     speed= a_speed_kh1,
                     date= datetime.now().date(),
                     count=len(counter1),
-                    liscenseplate_no= "",
+                    liscenseplate_no= best_plate,
                     )
                     new_data.save()
 
@@ -280,7 +280,7 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'speed_estimation\test_vid\Cars_Moving.mp4'
+    video_path = r'speed_estimation\test_vid\IMG-2732.mp4'
     model_path = 'models\yolov8s.pt'
     class_list_path = r'models\coco.txt'
    

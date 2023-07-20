@@ -29,28 +29,28 @@
     </div>
     <div class="side-box">
 
-      <table  id="myTable">
+      <table  class="div_table">
+        <tbody class="table__body">
+        
         <tr >
             <th >SN</th>
-            <th>Liscenseplate no</th>
+            <th>liscenceplate no</th>
             <th>Speed</th>
-            <th>limit</th>
-            <th>Date</th>
             <th >count</th>
            
         </tr>
-       
-        {% for Record in Record_list %}
-      <tr>
-        <td>{{Record.pk}}</td>
-        <td>{{Record.liscenseplate_no}}</td>
-        <td>{{Record.speed}}</td>
-        <td>50</td>
-        <td class="date-column">{{Record.date|date:"d/m/Y"}}</td>  
         
-        <td>{{Record.count}}</td>
+        {% for Record in Record_list %}
+          <tr>
+              <td>{{Record.pk}}</td>
+              <td>{{Record.liscenseplate_no}}</td>
+              <td>{{Record.speed}}</td>
+              <td>{{Record.count}}</td>
+          </tr>
+        {% endfor %} 
       </tr>
-      {% endfor %}
+      </tbody>
+
     </table>
 
     </div>

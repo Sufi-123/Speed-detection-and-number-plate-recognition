@@ -42,23 +42,56 @@ def admin_login(request):
 def dotm_home(request):
         #passing 4 records from station
         station=Station.objects.all()[:4]
+        limit = 50  # Speed limit value
+        records = Record.objects.order_by('speed')[::-1]  # Get the bottom 20 records by speed
+        new_record= Record.objects.order_by('speed')
+        # Aggregate the number of vehicles per day
+        day_count = defaultdict(int)
+        for record in new_record:
+            if record.speed > limit:
+                day_count[record.date.strftime('%d/%m/%Y')] += 1
+
+        # Extract the day-month-year labels and count values
+        label1 = list(day_count.keys())
+        count1 = list(day_count.values())
+
+
+        # Aggregate the number of vehicles exceeding the speed limit per month
+        month_count = defaultdict(int)
+        for record in new_record:
+            if record.speed > limit:
+                month_count[record.date.strftime('%m/%Y')] += 1
+
+        # Extract the month-year labels and count values
+        labels = list(month_count.keys())
+        counts = list(month_count.values())
+
+        exceeded_limit = [record for record in records if record.speed > limit]
+        within_limit = [record for record in records if record.speed <= limit]
+        speeds = [record.speed for record in records]
+
+        # Generate the line graph
+        chart_path = generate_bar_graph(exceeded_limit, within_limit)
+        permonth_path= generate_permonth_graph(labels, counts)
+
         context={
-            'stations': station
+            'stations': station,
+            'chart_path': chart_path,
+
         }
         return render(request,'dotm_home.html', context)
-
 
 def traffics(request):
     Station_list= Station.objects.all()
     if request.method == 'POST':
 
-        stationID = request.POST['stationID']
+       
         Areacode = request.POST['areaCode']
         location = request.POST['location']
         mac_address = request.POST['mac_address']
 
 
-        station_booth = Station.objects.create(IDs=stationID, areacode=Areacode, location=location, mac_address=mac_address)
+        station_booth = Station.objects.create(  areacode=Areacode, location=location, mac_address=mac_address)
         station_booth.save()
 
 
@@ -71,7 +104,7 @@ def traffics(request):
 
 def chart_display(request):
     limit = 50  # Speed limit value
-    records = Record.objects.order_by('speed')[:20][::-1]  # Get the bottom 20 records by speed
+    records = Record.objects.order_by('speed')[::-1]  # Get the bottom 20 records by speed
     new_record= Record.objects.order_by('speed')
     # Aggregate the number of vehicles per day
     day_count = defaultdict(int)

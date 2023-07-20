@@ -54,7 +54,7 @@ def Records(request):
     }
     return render(request, 'Records.html', context)
   
-
+    
 def download_csv(request):
     # Retrieve data from the database or any other source
     # records = Record.objects.all()  # Fetch records from the ViewRecord model
@@ -80,13 +80,12 @@ def download_csv(request):
 
     # Create a CSV writer and write the header row
     writer = csv.writer(response)
-    writer.writerow(['SN', 'StationID', 'License Plate No', 'Speed', 'Date', 'ID', 'Count'])
+    writer.writerow(['SN', 'License Plate No', 'Speed', 'Date', 'ID', 'Count'])
 
     # Write the data rows
     for record in filtered_records:
         writer.writerow([
             record.pk,
-            record.stationID,
             record.liscenseplate_no,
             record.speed,
             record.date,
