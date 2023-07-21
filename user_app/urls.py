@@ -7,4 +7,5 @@ urlpatterns = [
    path("Home/",views.home,name="home"),
    path('video/', views.video, name='video'),
    path("Records/",views.Records,name="Records"),
+   path('api/records/', views.get_records, name='get_records'),
 ]

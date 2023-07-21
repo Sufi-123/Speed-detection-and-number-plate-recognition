@@ -28,52 +28,28 @@
       </a>
     </div>
     <div class="side-box">
-
-      <table  class="div_table">
-        <tbody class="table__body">
-        
-        <tr >
-            <th >SN</th>
-            <th>liscenceplate no</th>
-            <th>Speed</th>
-            <th >count</th>
-           
-        </tr>
-        
-        {% for Record in Record_list %}
+      <table id="myTable">
+        <thead>
           <tr>
-              <td>{{Record.pk}}</td>
-              <td>{{Record.liscenseplate_no}}</td>
-              <td>{{Record.speed}}</td>
-              <td>{{Record.count}}</td>
+            <th>SN</th>
+            <th>License Plate No</th>
+            <th>Speed</th>
+            <th>Date</th>
           </tr>
-        {% endfor %} 
-      </tr>
-      </tbody>
-
-    </table>
-
+        </thead>
+        <tbody>
+          
+  
+        </tbody>
+      </table>
     </div>
+    
    
   </div>
-  
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    window.addEventListener('DOMContentLoaded', (event) => {
-      const table = document.getElementById('div_table');
-      const rows = table.getElementsByTagName('tr');
-      
-      for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
-        const limitCell = rows[i].getElementsByTagName('td')[3];
-        const speedCell = rows[i].getElementsByTagName('td')[2];
-        
-        const limit = parseInt(limitCell.innerText);
-        const Speed = parseInt(speedCell.innerText);
-        
-        if (Speed > limit) {
-          speedCell.style.backgroundColor = 'red';
-        }
-      }
-    });
+   
   <!-- Add video player and other content here -->
   
     function startCamera() {
@@ -84,5 +60,6 @@
    }
 
   </script>
+  <script src="static\js\records_table.js"></script>
 </body>
 </html>

@@ -94,3 +94,15 @@ def download_csv(request):
 
     return response
 
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from .serialization import RecordSerializer
+
+@api_view(['GET'])
+def get_records(request):
+    records = Record.objects.all()
+    print(".................................................................................")
+    serializer = RecordSerializer(records, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
