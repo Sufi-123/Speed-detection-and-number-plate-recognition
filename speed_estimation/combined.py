@@ -23,8 +23,11 @@ number_plate_model = YOLO(best_path)
 model= load_model(r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/model.h5')
 
 # Preprocess the number plate region for OCR
-def preprocess_image(image,scale_factor=3):
-    scaled_image = cv2.resize(image, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_LINEAR)
+def preprocess_image(image,scale_factor=3, elongate_factor=3.5):
+    # Elongate the image
+    elongated_image = cv2.resize(image, None, fx=elongate_factor, fy=1.0, interpolation=cv2.INTER_LINEAR)
+
+    scaled_image = cv2.resize(elongated_image, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_LINEAR)
      # Convert to grayscale
     grayscale_image = cv2.cvtColor(scaled_image, cv2.COLOR_BGR2GRAY)
     #gaussian blur
@@ -38,6 +41,9 @@ def threshold(image):
     
     # Invert the colors
     inverted_image = cv2.bitwise_not(threshold_image)
+    # Perform morphological erosion on the mask
+    # kernel = np.ones((3,3), np.uint8)
+    # inverted_image = cv2.erode(inverted_image, kernel, iterations=1)
     return inverted_image  
 
 def segment_characters(image):
@@ -49,7 +55,7 @@ def segment_characters(image):
     # Set lower bound and upper bound criteria for characters
     total_pixels = image.shape[0] * image.shape[1]
     lower = total_pixels // 100 # heuristic param, can be fine tuned if necessary
-    upper = total_pixels // 10 # heuristic param, can be fine tuned if necessary
+    upper = total_pixels // 10# heuristic param, can be fine tuned if necessary
 
     # Loop over the unique components
     for (i, label) in enumerate(np.unique(labels)):
@@ -67,6 +73,11 @@ def segment_characters(image):
         # add it to our mask
         if numPixels > lower and numPixels < upper:
             mask = cv2.add(mask, labelMask)
+
+    # Perform morphological opening on the mask
+    kernel = np.ones((6,6), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+
     return mask
 
 
@@ -138,9 +149,9 @@ def license_plate(frame,y3,y4,x3,x4,id):
                 elif cnn_prediction == 10:
                     plate += 'BA '
                 elif cnn_prediction == 11:
-                    plate += 'CHA '
+                    plate += ' CHA '
                 elif cnn_prediction == 12:
-                    plate += 'PA '
+                    plate += ' PA '
                 else:
                     plate += 'Unknown'
             
@@ -159,9 +170,9 @@ def license_plate(frame,y3,y4,x3,x4,id):
 def calculate_axis_positions(frame):
     frame_width=frame.shape[1]
     frame_height = frame.shape[0]
-    center_y1 = int(frame_height * 0.35) 
-    # 0.2..0.4   47  35  62
-    center_y2 = int(frame_height * 0.62)  
+    center_y1 = int(frame_height * 0.48) 
+    # 0.2..0.4   47  35  62   0.48  0.69999
+    center_y2 = int(frame_height * 0.69) 
     offset = int(frame_height * 0.02)  
     line_x1 = int(frame_width * 0)
     line_x2 = int(frame_width * 1)
@@ -269,7 +280,7 @@ def count_vehicles(counter, counter1):
     return vehicle_down_count, vehicle_up_count
 
 def process_video():
-    video_path = r'/home/rubi/Desktop/baba1.mp4'
+    video_path = r'/home/rubi/Desktop/100.mp4'
     model_path = '/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/yolov8s.pt'
     class_list_path = r'/home/rubi/Desktop/start/Speed-detection-and-number-plate-recognition/models/coco.txt'
    
